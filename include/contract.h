@@ -40,14 +40,14 @@
         }                                                       \
     } while (0)                                                 \
 
-#define precond(MODE, EXPR)  contract_check(precondition, MODE, EXPR)
-#define precond(EXPR)        precond(dbg, EXPR)
+#define precond(MODE, EXPR, MSG)  contract_check(precondition, MODE, EXPR)
+#define precond(EXPR, MSG)        precond(dbg, EXPR)
 
-#define postcond(MODE, EXPR) contract_check(postcondition, MODE, EXPR)
-#define postcond(EXPR)       postcond(dbg, EXPR)
+#define postcond(MODE, EXPR, MSG) contract_check(postcondition, MODE, EXPR)
+#define postcond(EXPR, MSG)       postcond(dbg, EXPR)
 
-#define invar(MODE, EXPR)    constract_check(invariant, MODE, EXPR)
-#define invar(EXPR)          invar(dbg, EXPR)
+#define invar(MODE, EXPR, MSG)    constract_check(invariant, MODE, EXPR)
+#define invar(EXPR, MSG)          invar(dbg, EXPR)
 
 namespace contract
 {
