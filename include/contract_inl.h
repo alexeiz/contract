@@ -65,9 +65,9 @@ void default_handler(type contr_type,
     }
 
     std::cerr << type_str << "'\n"
-              << "Message:   " << message << "\n"
-              << "Condition: " << expr << "\n"
-              << "Function:  " << func << std::endl;
+              << "message:   " << message << "\n"
+              << "condition: " << expr << "\n"
+              << "function:  " << func << std::endl;
 
     std::abort();
 }
