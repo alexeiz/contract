@@ -1,29 +1,10 @@
 #ifndef included_contract_h__
 #define included_contract_h__
 
-#define contract_check_active(MODE)  contract_check_active_ ## MODE
+#include <cstddef>
 
-#define contract_check_active_opt  true
-
-#if !defined(NDEBUG)
-#   define contract_check_active_dbg  true
-
-#   if defined(SAFE)
-#       define contract_check_active_safe  false
-#   endif
-#endif
-
-#if !defined(contract_check_active_opt)
-#define contract_check_active_opt  false
-#endif
-
-#if !defined(contract_check_active_dbg)
-#define contract_check_active_opt  false
-#endif
-
-#if !defined(contract_check_active_safe)
-#define contract_check_active_opt  false
-#endif
+// macros
+//
 
 #define contract_check(TYPE, MODE, EXPR, MSG)                   \
     do                                                          \
@@ -40,14 +21,17 @@
         }                                                       \
     } while (0)                                                 \
 
-#define precond(MODE, EXPR, MSG)  contract_check(precondition, MODE, EXPR)
-#define precond(EXPR, MSG)        precond(dbg, EXPR)
+#define precondition_(MODE, EXPR, MSG)  contract_check(precondition, MODE, EXPR, MSG)
+#define precondition(EXPR, MSG)         precondition_(dbg, EXPR, MSG)
 
-#define postcond(MODE, EXPR, MSG) contract_check(postcondition, MODE, EXPR)
-#define postcond(EXPR, MSG)       postcond(dbg, EXPR)
+#define postcondition_(MODE, EXPR, MSG) contract_check(postcondition, MODE, EXPR, MSG)
+#define postcondition(EXPR, MSG)        postcondition_(dbg, EXPR, MSG)
 
-#define invar(MODE, EXPR, MSG)    constract_check(invariant, MODE, EXPR)
-#define invar(EXPR, MSG)          invar(dbg, EXPR)
+#define invariant_(MODE, EXPR, MSG)     constract_check(invariant, MODE, EXPR, MSG)
+#define invariant(EXPR, MSG)            invariant_(dbg, EXPR, MSG)
+
+// interface
+//
 
 namespace contract
 {
@@ -69,23 +53,25 @@ enum class mode
 [[noreturn]]
 void failure(type contr_type,
              mode build_mode,
-             const char * message,
-             const char * expr,
-             const char * func,
-             const char * file,
+             char const * message,
+             char const * expr,
+             char const * func,
+             char const * file,
              std::size_t line);
 
 using handler = void (*)(type contr_type,
                          mode build_mode,
-                         const char * message,
-                         const char * expr,
-                         const char * func,
-                         const char * file,
+                         char const * message,
+                         char const * expr,
+                         char const * func,
+                         char const * file,
                          std::size_t line);
 
-handler set_failure(handler h) noexcept;
+handler set_failure(handler new_handler) noexcept;
 handler get_failure() noexcept;
 
-}
+}  // namespace contract
+
+#include <contract_inl.h>
 
 #endif
