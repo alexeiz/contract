@@ -38,6 +38,8 @@ struct contract_maker
 #define contract                                                          \
     auto contract_obj = contract_maker() + [&]{ class_contract(); } + [&] \
 
+#define class_contract  void class_contract_method() const
+
 class account
 {
 public:
@@ -85,7 +87,7 @@ public:
     }
 
 private:
-    void class_contract() const
+    class_contract
     {
         invariant(balance_ >= 0);
     }
