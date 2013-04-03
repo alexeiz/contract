@@ -6,8 +6,8 @@
 #define contract(scope)  contract_ ## scope
 
 #define contract_fun                                            \
-    contract_context contract_context__;                        \
-    auto contract_obj__ = contractor(contract_context__) + [&]  \
+    auto contract_obj__ = contractor()                          \
+        + [&](contract_context const & contract_context__)      \
 
 #define precondition(expr)                                      \
     do {                                                        \
@@ -37,14 +37,13 @@ struct contract_context
 template <typename ContrFunc>
 struct concrete_contract
 {
-    concrete_contract(ContrFunc f, contract_context & ctx)
+    concrete_contract(ContrFunc f)
         : contr_{f}
-        , ctx_(ctx)
     {
         ctx_.check_precondition = true;
         ctx_.check_postcondition = false;
         ctx_.check_invariant = true;
-        contr_();
+        contr_(ctx_);
     }
 
     ~concrete_contract()
@@ -52,26 +51,20 @@ struct concrete_contract
         ctx_.check_precondition = false;
         ctx_.check_postcondition = true;
         ctx_.check_invariant = true;
-        contr_();
+        contr_(ctx_);
     }
 
     ContrFunc contr_;
-    contract_context & ctx_;
+    contract_context ctx_;
 };
 
 struct contractor
 {
-    contractor(contract_context & ctx)
-        : ctx_(ctx)
-    {}
-
     template <typename Func>
     concrete_contract<Func> operator+(Func f) const
     {
-        return concrete_contract<Func>{f, ctx_};
+        return concrete_contract<Func>{f};
     }
-
-    contract_context & ctx_;
 };
 
 #endif
