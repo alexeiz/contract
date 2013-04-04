@@ -6,12 +6,19 @@
 
 #define contract(scope)  contract_ ## scope
 
-#define contract_fun                                            \
-    auto contract_obj__ = contractor<decltype(this)>(this)      \
-        + [&](contract_context const & contract_context__)      \
+#define contract_fun                                                    \
+    auto contract_obj__ =                                               \
+        contractor<std::remove_reference<decltype(*this)>::type>(this)  \
+        + [&](contract_context const & contract_context__)              \
 
 #define contract_class                                          \
-    void class_contract(                                        \
+    template <typename T>                                       \
+    friend class class_contract_base;                           \
+                                                                \
+    template <typename T>                                       \
+    friend class has_class_contract;                            \
+                                                                \
+    void class_contract__(                                      \
         contract_context const & contract_context__) const      \
 
 #define precondition(expr)                                      \
@@ -63,14 +70,32 @@ struct fun_contract
     contract_context ctx_;
 };
 
-// class_contract checks only invariants
-template <typename ContrFunc>
-struct class_contract
+template <typename T>
+struct class_contract_base
 {
-    class_contract(ContrFunc f)
-        : contr_{f}
+    class_contract_base(T * obj)
+        : obj_(obj)
+    {}
+
+    ~class_contract_base()
     {
-        ctx_.check_precondition = false;
+        contract_context ctx = {false, false, true};
+        obj_->class_contract__(ctx);
+    }
+
+    T * obj_;
+};
+
+template <typename T, typename ContrFunc>
+struct class_contract : class_contract_base<T>
+{
+    using base_type = class_contract_base<T>;
+
+    class_contract(T * obj, ContrFunc f)
+        : base_type{obj}
+        , contr_{f}
+    {
+        ctx_.check_precondition = true;
         ctx_.check_postcondition = false;
         ctx_.check_invariant = true;
         contr_(ctx_);
@@ -78,11 +103,9 @@ struct class_contract
 
     ~class_contract()
     {
-        contr_(ctx_);
-    }
-
-    void operator()() const
-    {
+        ctx_.check_precondition = false;
+        ctx_.check_postcondition = true;
+        ctx_.check_invariant = true;
         contr_(ctx_);
     }
 
@@ -93,11 +116,18 @@ struct class_contract
 template <typename T>
 struct has_class_contract
 {
-    static auto test(int) -> decltype(declval<T>().class_contract(), std::true_type{});
+    template <typename U>
+    static auto test(int) -> decltype(std::declval<U>().class_contract__(
+                                          std::declval<contract_context>()),
+                                      std::true_type{});
+    template <typename U>
+    static auto test(...) -> std::false_type;
+
+    using type = decltype(test<T>(0));
 };
 
 
-template <typename T, bool = has_class_contract<T>::value>
+template <typename T, bool = has_class_contract<T>::type::value>
 struct contractor;
 
 template <typename T>
@@ -106,10 +136,26 @@ struct contractor<T, false>
     contractor(T *) {}
 
     template <typename Func>
-    concrete_contract<Func> operator+(Func f) const
+    fun_contract<Func> operator+(Func f) const
     {
         return fun_contract<Func>{f};
     }
+};
+
+template <typename T>
+struct contractor<T, true>
+{
+    contractor(T * obj)
+        : obj_(obj)
+    {}
+
+    template<typename Func>
+    class_contract<T, Func> operator+(Func f) const
+    {
+        return class_contract<T, Func>{obj_, f};
+    }
+
+    T * obj_;
 };
 
 #endif
