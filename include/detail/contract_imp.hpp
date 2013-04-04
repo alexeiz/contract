@@ -1,18 +1,9 @@
-#ifndef included_contract1_h__
-#define included_contract1_h__
+#ifndef included_contract_imp_hpp__
+#define included_contract_imp_hpp__
 
-#include <functional>
-#include <cstddef>
-
-// used in the implementation
 #include <type_traits>
 #include <iostream>
 #include <cstdlib>
-
-// macros
-//
-
-#define contract(scope)  contract_ ## scope ## __
 
 // implementation: macros
 //
@@ -52,10 +43,6 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
-#define precondition(expr)   contract_check__(precondition,  expr)
-#define postcondition(expr)  contract_check__(postcondition, expr)
-#define invariant(expr)      contract_check__(invariant,     expr)
-
 #define contract_check__(TYPE, EXPR)                            \
     do {                                                        \
         if (contract_context__.check_ ## TYPE && !(EXPR))       \
@@ -66,7 +53,6 @@
                                        __FILE__,                \
                                        __LINE__);               \
     } while (0)                                                 \
-
 
 namespace contract
 {
@@ -194,40 +180,7 @@ struct contractor<T, true>
     bool exit_;
 };
 
-}  // namespace detail
-
-// interface
-//
-
-enum class type
-{
-    precondition,
-    postcondition,
-    invariant
-};
-
-[[noreturn]]
-void handle_violation(type contr_type,
-                      char const * message,
-                      char const * expr,
-                      char const * func,
-                      char const * file,
-                      std::size_t line);
-
-using violation_handler = std::function<void (type contr_type,
-                                              char const * message,
-                                              char const * expr,
-                                              char const * func,
-                                              char const * file,
-                                              std::size_t line)>;
-
-violation_handler set_handler(violation_handler new_handler);
-violation_handler get_handler();
-
-namespace detail
-{
-
-// implementation
+// implementation: violation handler
 //
 
 inline
