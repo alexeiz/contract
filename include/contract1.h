@@ -6,38 +6,40 @@
 
 #define contract(scope)  contract_ ## scope
 
-#define contract_fun                                              \
-    auto contract_obj__ =                                         \
-        contractor<void *>(0)                                     \
-        + [&](contract_context const & contract_context__)        \
+#define contract_fun                                                         \
+    auto contract_obj__ =                                                    \
+        contract::detail::contractor<void *>(0)                              \
+        + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_meth                                             \
-    auto contract_obj__ =                                         \
-        contractor<std::remove_reference<decltype(*this)>::type>( \
-            this)                                                 \
-        + [&](contract_context const & contract_context__)        \
+#define contract_meth                                                        \
+    auto contract_obj__ =                                                    \
+        contract::detail::contractor<                                        \
+            std::remove_reference<decltype(*this)>::type>(this)              \
+        + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_ctor                                             \
-    auto contract_obj__ =                                         \
-        contractor<std::remove_reference<decltype(*this)>::type>( \
-            this, false, true)                                    \
-        + [&](contract_context const & contract_context__)        \
+#define contract_ctor                                                        \
+    auto contract_obj__ =                                                    \
+        contract::detail::contractor<                                        \
+            std::remove_reference<decltype(*this)>::type>(                   \
+                this, false, true)                                           \
+        + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_dtor                                             \
-    auto contract_obj__ =                                         \
-        contractor<std::remove_reference<decltype(*this)>::type>( \
-            this, true, false)                                    \
-        + [&](contract_context const & contract_context__)        \
+#define contract_dtor                                                        \
+    auto contract_obj__ =                                                    \
+        contract::detail::contractor<                                        \
+            std::remove_reference<decltype(*this)>::type>(                   \
+                this, true, false)                                           \
+        + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_class                                          \
-    template <typename T>                                       \
-    friend class class_contract_base;                           \
-                                                                \
-    template <typename T>                                       \
-    friend class has_class_contract;                            \
-                                                                \
-    void class_contract__(                                      \
-        contract_context const & contract_context__) const      \
+#define contract_class                                                       \
+    template <typename T>                                                    \
+        friend class contract::detail::class_contract_base;                  \
+                                                                             \
+    template <typename T>                                                    \
+    friend class contract::detail::has_class_contract;                       \
+                                                                             \
+    void class_contract__(                                                   \
+        contract::detail::contract_context const & contract_context__) const \
 
 #define precondition(expr)                                      \
     do {                                                        \
@@ -56,6 +58,11 @@
         if (contract_context__.check_invariant && !(expr))      \
             std::abort();                                       \
     } while (0)                                                 \
+
+namespace contract
+{
+namespace detail
+{
 
 struct contract_context
 {
@@ -174,5 +181,8 @@ struct contractor<T, true>
     bool enter_;
     bool exit_;
 };
+
+}  // namespace detail
+}  // namespace contract
 
 #endif
