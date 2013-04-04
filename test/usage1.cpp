@@ -1,4 +1,5 @@
 #include <contract1.h>
+#include <iostream>
 
 class account
 {
@@ -63,8 +64,23 @@ account make_account_with_fee(int balance)
     return account(balance - fee);
 }
 
+contract::violation_handler old_handler;
+void my_contract_violation_handler(contract::type type,
+                                   char const * message,
+                                   char const * expr,
+                                   char const * func,
+                                   char const * file,
+                                   std::size_t line)
+{
+    std::cerr << "in my_contract_violation_handler:\n";
+    old_handler(type, message, expr, func, file, line);
+}
+
+
 int main()
 {
+    old_handler = contract::set_handler(my_contract_violation_handler);
+
     account acc(100);
     acc.withdraw(10);
     acc.deposit(20);
