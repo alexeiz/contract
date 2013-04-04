@@ -6,10 +6,23 @@
 
 #define contract(scope)  contract_ ## scope
 
-#define contract_fun                                                    \
-    auto contract_obj__ =                                               \
-        contractor<std::remove_reference<decltype(*this)>::type>(this)  \
-        + [&](contract_context const & contract_context__)              \
+#define contract_fun                                              \
+    auto contract_obj__ =                                         \
+        contractor<std::remove_reference<decltype(*this)>::type>( \
+            this)                                                 \
+        + [&](contract_context const & contract_context__)        \
+
+#define contract_ctor                                             \
+    auto contract_obj__ =                                         \
+        contractor<std::remove_reference<decltype(*this)>::type>( \
+            this, false, true)                                    \
+        + [&](contract_context const & contract_context__)        \
+
+#define contract_dtor                                             \
+    auto contract_obj__ =                                         \
+        contractor<std::remove_reference<decltype(*this)>::type>( \
+            this, true, false)                                    \
+        + [&](contract_context const & contract_context__)        \
 
 #define contract_class                                          \
     template <typename T>                                       \
@@ -41,6 +54,12 @@
 
 struct contract_context
 {
+    contract_context(bool pre, bool post, bool inv)
+        : check_precondition{pre}
+        , check_postcondition{post}
+        , check_invariant{inv}
+    {}
+
     bool check_precondition;
     bool check_postcondition;
     bool check_invariant;
@@ -49,58 +68,56 @@ struct contract_context
 template <typename ContrFunc>
 struct fun_contract
 {
-    fun_contract(ContrFunc f)
+    explicit
+    fun_contract(ContrFunc f, bool enter = true, bool exit = true)
         : contr_{f}
+        , exit_{exit}
     {
-        contract_context ctx = {true, false, true};
-        contr_(ctx);
+        contr_(contract_context{true, false, enter});
     }
 
     ~fun_contract()
     {
-        contract_context ctx = {false, true, true};
-        contr_(ctx);
+        contr_(contract_context{false, true, exit_});
     }
 
     ContrFunc contr_;
+    bool exit_;
 };
 
 template <typename T>
 struct class_contract_base
 {
-    class_contract_base(T const * obj)
-        : obj_(obj)
-    {}
+    class_contract_base(T const * obj, bool enter, bool exit)
+        : obj_{obj}
+        , exit_{exit}
+    {
+        if (enter)
+            obj_->class_contract__(contract_context{false, false, true});
+    }
 
     ~class_contract_base()
     {
-        contract_context ctx = {false, false, true};
-        obj_->class_contract__(ctx);
+        if (exit_)
+            obj_->class_contract__(contract_context{false, false, true});
     }
 
     T const * obj_;
+    bool exit_;
 };
 
 template <typename T, typename ContrFunc>
-struct class_contract : class_contract_base<T>
+struct class_contract
+    : class_contract_base<T>
+    , fun_contract<ContrFunc>
 {
-    using base_type = class_contract_base<T>;
+    using class_base = class_contract_base<T>;
+    using fun_base = fun_contract<ContrFunc>;
 
-    class_contract(T const * obj, ContrFunc f)
-        : base_type{obj}
-        , contr_{f}
-    {
-        contract_context ctx = {true, false, true};
-        contr_(ctx);
-    }
-
-    ~class_contract()
-    {
-        contract_context ctx = {false, true, true};
-        contr_(ctx);
-    }
-
-    ContrFunc contr_;
+    class_contract(T const * obj, ContrFunc f, bool enter, bool exit)
+        : class_base{obj, enter, exit}
+        , fun_base{f, enter, exit}
+    {}
 };
 
 template <typename T>
@@ -116,36 +133,41 @@ struct has_class_contract
     using type = decltype(test<T>(0));
 };
 
-
 template <typename T, bool = has_class_contract<T>::type::value>
 struct contractor;
 
 template <typename T>
 struct contractor<T, false>
 {
-    contractor(T const *) {}
+    explicit
+    contractor(T const *, bool = true, bool = true) {}
 
     template <typename Func>
     fun_contract<Func> operator+(Func f) const
     {
-        return fun_contract<Func>{f};
+        return fun_contract<Func>{f, true, true};
     }
 };
 
 template <typename T>
 struct contractor<T, true>
 {
-    contractor(T const * obj)
-        : obj_(obj)
+    explicit
+    contractor(T const * obj, bool enter = true, bool exit = true)
+        : obj_{obj}
+        , enter_{enter}
+        , exit_{exit}
     {}
 
     template<typename Func>
     class_contract<T, Func> operator+(Func f) const
     {
-        return class_contract<T, Func>{obj_, f};
+        return class_contract<T, Func>{obj_, f, enter_, exit_};
     }
 
     T const * obj_;
+    bool enter_;
+    bool exit_;
 };
 
 #endif

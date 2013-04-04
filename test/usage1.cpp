@@ -4,14 +4,19 @@ class account
 {
 public:
     account(int deposit)
-        : balance_(deposit)
+        : balance_(-1)
     {
-        contract(fun) {};
+        contract(ctor) { precondition(deposit >= 0); };
+
+        balance_ = deposit;
     }
 
     ~account()
     {
-        contract(fun) {};
+        int closing_balance = balance_;
+        contract(dtor) { postcondition(closing_balance >= 0); };
+
+        balance_ = -1;
     }
 
     int withdraw(int ammount)
@@ -31,10 +36,7 @@ public:
 
     int deposit(int ammount)
     {
-        contract(fun)
-        {
-            precondition(ammount >= 0);
-        };
+        contract(fun) { precondition(ammount >= 0); };
 
         balance_ += ammount;
         return balance_;
@@ -47,10 +49,7 @@ public:
     }
 
 private:
-    contract(class)
-    {
-        invariant(balance_ >= 0);
-    };
+    contract(class) { invariant(balance_ >= 0); };
 
 private:
     int balance_;
