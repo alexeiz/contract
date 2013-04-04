@@ -12,37 +12,37 @@
 // macros
 //
 
-#define contract(scope)  contract_ ## scope
+#define contract(scope)  contract_ ## scope ## __
 
 // implementation: macros
 //
 
-#define contract_fun                                                         \
+#define contract_fun__                                                       \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<void *>(0)                              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_meth                                                        \
+#define contract_meth__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(this)              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_ctor                                                        \
+#define contract_ctor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(                   \
                 this, false, true)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_dtor                                                        \
+#define contract_dtor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(                   \
                 this, true, false)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_class                                                       \
+#define contract_class__                                                     \
     template <typename T>                                                    \
         friend class contract::detail::class_contract_base;                  \
                                                                              \
@@ -52,11 +52,11 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
-#define precondition(expr)   contract_check(precondition,  expr)
-#define postcondition(expr)  contract_check(postcondition, expr)
-#define invariant(expr)      contract_check(invariant,     expr)
+#define precondition(expr)   contract_check__(precondition,  expr)
+#define postcondition(expr)  contract_check__(postcondition, expr)
+#define invariant(expr)      contract_check__(invariant,     expr)
 
-#define contract_check(TYPE, EXPR)                              \
+#define contract_check__(TYPE, EXPR)                            \
     do {                                                        \
         if (contract_context__.check_ ## TYPE && !(EXPR))       \
             contract::handle_violation(contract::type:: TYPE,   \
@@ -70,7 +70,6 @@
 
 namespace contract
 {
-
 namespace detail
 {
 
@@ -294,7 +293,7 @@ void handle_violation(type contr_type,
                                               file,
                                               line);
 
-    // if the handler returned, abort anyway to satisfy the [[noreturn]] contract
+    // if the handler returns, abort anyway to satisfy the [[noreturn]] contract
     std::abort();
 }
 

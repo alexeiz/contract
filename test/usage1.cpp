@@ -76,7 +76,6 @@ void my_contract_violation_handler(contract::type type,
     old_handler(type, message, expr, func, file, line);
 }
 
-
 int main()
 {
     old_handler = contract::set_handler(my_contract_violation_handler);
