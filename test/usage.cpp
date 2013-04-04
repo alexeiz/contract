@@ -1,4 +1,4 @@
-#include <contract.h>
+#include <contract.hpp>
 
 #include <iostream>
 #include <cstring>
