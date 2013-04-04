@@ -47,12 +47,10 @@ public:
     }
 
 private:
-    /*
     contract(class)
     {
         invariant(balance_ >= 0);
-    }
-    */
+    };
 
 private:
     int balance_;
