@@ -8,6 +8,11 @@
 
 #define contract_fun                                              \
     auto contract_obj__ =                                         \
+        contractor<void *>(0)                                     \
+        + [&](contract_context const & contract_context__)        \
+
+#define contract_meth                                             \
+    auto contract_obj__ =                                         \
         contractor<std::remove_reference<decltype(*this)>::type>( \
             this)                                                 \
         + [&](contract_context const & contract_context__)        \

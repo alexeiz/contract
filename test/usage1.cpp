@@ -23,7 +23,7 @@ public:
     {
         int withdrawn = 0;
 
-        contract(fun)
+        contract(meth)
         {
             precondition(ammount >= 0);
             postcondition(withdrawn >= 0);
@@ -36,7 +36,7 @@ public:
 
     int deposit(int ammount)
     {
-        contract(fun) { precondition(ammount >= 0); };
+        contract(meth) { precondition(ammount >= 0); };
 
         balance_ += ammount;
         return balance_;
@@ -44,7 +44,7 @@ public:
 
     int balance() const
     {
-        contract(fun) {};
+        contract(meth) {};
         return balance_;
     }
 
@@ -55,10 +55,19 @@ private:
     int balance_;
 };
 
+account make_account_with_fee(int balance)
+{
+    int const fee = 5;
+    contract(fun) { precondition(balance > fee); };
+
+    return account(balance - fee);
+}
+
 int main()
 {
     account acc(100);
     acc.withdraw(10);
     acc.deposit(20);
+    acc = make_account_with_fee(15);
     return acc.balance();
 }
