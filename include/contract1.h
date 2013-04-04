@@ -52,28 +52,23 @@ struct fun_contract
     fun_contract(ContrFunc f)
         : contr_{f}
     {
-        ctx_.check_precondition = true;
-        ctx_.check_postcondition = false;
-        ctx_.check_invariant = true;
-        contr_(ctx_);
+        contract_context ctx = {true, false, true};
+        contr_(ctx);
     }
 
     ~fun_contract()
     {
-        ctx_.check_precondition = false;
-        ctx_.check_postcondition = true;
-        ctx_.check_invariant = true;
-        contr_(ctx_);
+        contract_context ctx = {false, true, true};
+        contr_(ctx);
     }
 
     ContrFunc contr_;
-    contract_context ctx_;
 };
 
 template <typename T>
 struct class_contract_base
 {
-    class_contract_base(T * obj)
+    class_contract_base(T const * obj)
         : obj_(obj)
     {}
 
@@ -83,7 +78,7 @@ struct class_contract_base
         obj_->class_contract__(ctx);
     }
 
-    T * obj_;
+    T const * obj_;
 };
 
 template <typename T, typename ContrFunc>
@@ -91,26 +86,21 @@ struct class_contract : class_contract_base<T>
 {
     using base_type = class_contract_base<T>;
 
-    class_contract(T * obj, ContrFunc f)
+    class_contract(T const * obj, ContrFunc f)
         : base_type{obj}
         , contr_{f}
     {
-        ctx_.check_precondition = true;
-        ctx_.check_postcondition = false;
-        ctx_.check_invariant = true;
-        contr_(ctx_);
+        contract_context ctx = {true, false, true};
+        contr_(ctx);
     }
 
     ~class_contract()
     {
-        ctx_.check_precondition = false;
-        ctx_.check_postcondition = true;
-        ctx_.check_invariant = true;
-        contr_(ctx_);
+        contract_context ctx = {false, true, true};
+        contr_(ctx);
     }
 
     ContrFunc contr_;
-    contract_context ctx_;
 };
 
 template <typename T>
@@ -133,7 +123,7 @@ struct contractor;
 template <typename T>
 struct contractor<T, false>
 {
-    contractor(T *) {}
+    contractor(T const *) {}
 
     template <typename Func>
     fun_contract<Func> operator+(Func f) const
@@ -145,7 +135,7 @@ struct contractor<T, false>
 template <typename T>
 struct contractor<T, true>
 {
-    contractor(T * obj)
+    contractor(T const * obj)
         : obj_(obj)
     {}
 
@@ -155,7 +145,7 @@ struct contractor<T, true>
         return class_contract<T, Func>{obj_, f};
     }
 
-    T * obj_;
+    T const * obj_;
 };
 
 #endif
