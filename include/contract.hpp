@@ -1,6 +1,8 @@
 #ifndef included_contract_hpp__
 #define included_contract_hpp__
 
+#include <detail/version.hpp>
+
 #include <functional>
 #include <cstddef>
 
