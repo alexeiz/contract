@@ -7,11 +7,22 @@
 // interface: macros
 //
 
-#define contract(scope)  contract_ ## scope ## __
+#define contract(scope)           contract_ ## scope ## __
 
-#define precondition(expr)   contract_check__(precondition,  expr)
-#define postcondition(expr)  contract_check__(postcondition, expr)
-#define invariant(expr)      contract_check__(invariant,     expr)
+#define precondition(...)         concat__(precondition, arg_count__(__VA_ARGS__)) \
+                                      (__VA_ARGS__)
+#define precondition1(expr)       precondition2(expr, #expr)
+#define precondition2(expr, msg)  contract_check__(precondition, expr, msg)
+
+#define postcondition(...)        concat__(postcondition, arg_count__(__VA_ARGS__)) \
+                                      (__VA_ARGS__)
+#define postcondition1(expr)      postcondition2(expr, #expr)
+#define postcondition2(expr, msg) contract_check__(postcondition, expr, msg)
+
+#define invariant(...)            concat__(invariant, arg_count__(__VA_ARGS__)) \
+                                      (__VA_ARGS__)
+#define invariant1(expr)          invariant2(expr, #expr)
+#define invariant2(expr, msg)     contract_check__(invariant, expr, msg)
 
 namespace contract
 {

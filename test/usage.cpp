@@ -55,7 +55,7 @@ public:
     }
 
 private:
-    contract(class) { invariant(balance_ >= 0); };
+    contract(class) { invariant(balance_ >= 0, "balance can't be negative"); };
 
 private:
     int balance_;
@@ -79,8 +79,8 @@ std::size_t my_strlen(char const * str)
 
     contract(fun)
     {
-        precondition(str && "invalid argument");
-        postcondition(len == std::strlen(str) && "incorrect return value");
+        precondition(str, "invalid argument");
+        postcondition(len == std::strlen(str), "incorrect return value");
     };
 
     for (char const * p = str; *p; ++len, ++p)

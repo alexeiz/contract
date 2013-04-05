@@ -43,16 +43,24 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
-#define contract_check__(TYPE, EXPR)                            \
+#define contract_check__(TYPE, EXPR, MSG)                       \
     do {                                                        \
         if (contract_context__.check_ ## TYPE && !(EXPR))       \
             contract::handle_violation(contract::type:: TYPE,   \
-                                       #EXPR,                   \
+                                       MSG,                     \
                                        #EXPR,                   \
                                        __func__,                \
                                        __FILE__,                \
                                        __LINE__);               \
     } while (0)                                                 \
+
+// macros for variadic argument dispatch
+
+#define arg_count__(...) arg_pos__(__VA_ARGS__, 5, 4, 3, 2, 1)
+#define arg_pos__(                          _1,_2,_3,_4,_5, N, ...)  N
+
+#define concat__(macro, argc)   concat2__(macro, argc)
+#define concat2__(macro, argc)  macro ## argc
 
 namespace contract
 {
