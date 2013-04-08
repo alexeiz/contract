@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+# waf
+.waf-*
+.lock-waf*
+build/*
+*.pyc
