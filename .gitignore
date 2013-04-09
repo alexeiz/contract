@@ -13,7 +13,7 @@
 *.a
 
 # waf
-.waf-*
+.waf*
 .lock-waf*
 build/*
 *.pyc

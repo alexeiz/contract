@@ -39,9 +39,9 @@ When using MSVC, a lot of compilation flags need to match your BOOST build confi
  - boost libraries will try to be smart and use the (pretty but often not useful) auto-linking feature of MSVC
    So before calling `conf.check_boost` you might want to disabling by adding:
    	conf.env.DEFINES_BOOST += ['BOOST_ALL_NO_LIB']
-   Errors: 
+   Errors:
  - boost might also be compiled with /MT, which links the runtime statically.
-   If you have problems with redefined symbols, 
+   If you have problems with redefined symbols,
 		self.env['DEFINES_%s' % var] += ['BOOST_ALL_NO_LIB']
 		self.env['CXXFLAGS_%s' % var] += ['/MD', '/EHsc']
 Passing `--boost-linkage_autodetect` might help ensuring having a correct linkage in some basic cases.
@@ -53,8 +53,8 @@ import re
 from waflib import Utils, Logs, Errors
 from waflib.Configure import conf
 
-BOOST_LIBS = ['/usr/lib', '/usr/local/lib', '/opt/local/lib', '/sw/lib', '/lib']
-BOOST_INCLUDES = ['/usr/include', '/usr/local/include', '/opt/local/include', '/sw/include']
+BOOST_LIBS = ['/usr/local/lib', '/usr/lib', '/opt/local/lib', '/sw/lib', '/lib']
+BOOST_INCLUDES = ['/usr/local/include', '/usr/include', '/opt/local/include', '/sw/include']
 BOOST_VERSION_FILE = 'boost/version.hpp'
 BOOST_VERSION_CODE = '''
 #include <iostream>
