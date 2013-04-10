@@ -26,7 +26,7 @@ def build(bld):
                   includes = 'include',
                   export_includes = 'include',
                   use = 'BOOST',
-                  install_path = '${PREFIX}/lib')
+                  install_path = os.path.join('${PREFIX}', 'lib'))
 
     # build tests
     for t in bld.path.ant_glob('test/*.cpp'):
@@ -40,5 +40,7 @@ def build(bld):
                     install_path = None)
 
     # install headers
-    #bld.install_files('${PREFIX}/include',
-    #                  bld.path.ant_glob('include/**/*.hpp'))
+    for hdr in bld.path.ant_glob('include/**/*.hpp'):
+        bld.install_files(os.path.join('${PREFIX}',
+                                       os.path.dirname(hdr.srcpath())),
+                          hdr)
