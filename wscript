@@ -39,8 +39,26 @@ def build(bld):
                     use = 'BOOST contract',
                     install_path = None)
 
+    # report test failures
+    bld.add_post_fun(test_post_results)
+
     # install headers
     for hdr in bld.path.ant_glob('include/**/*.hpp'):
         bld.install_files(os.path.join('${PREFIX}',
                                        os.path.dirname(hdr.srcpath())),
                           hdr)
+
+def test_post_results(bld):
+    """ Report test failures """
+
+    test_res = getattr(bld, 'utest_results', [])
+
+    msg = []
+    for (f, code, out, err) in test_res:
+        if code:
+            msg.extend(out.decode('utf-8').split(os.linesep))
+            msg.extend(err.decode('utf-8').split(os.linesep))
+
+    if msg:
+        bld.fatal(os.linesep.join(m for m in msg
+                                  if len(m) > 1 and not m.startswith('Running')))
