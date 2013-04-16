@@ -4,9 +4,11 @@ top = '.'
 out = 'build'
 
 defflags = '-std=c++11'
+dbgflags = '-g -O0 -fno-inline'
+optflags = ''
 warnflags = '-Wall -Wno-attributes'
 
-cxxflags = defflags + ' ' + warnflags
+cxxflags = ' '.join([defflags, dbgflags, optflags, warnflags]);
 
 def options(opt):
     opt.load('compiler_cxx boost waf_unit_test')

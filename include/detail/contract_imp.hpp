@@ -227,7 +227,7 @@ void default_handler(type contr_type,
 
 // Holder for the currently installed contract failure handler.
 // Templated with a dummy type to be able to keep it in the header file.
-template <typename T = void>
+template <typename = void>
 struct handler_holder
 {
     static

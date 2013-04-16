@@ -40,14 +40,14 @@ enum class type
 };
 
 [[noreturn]]
-void handle_violation(type contr_type,
+void handle_violation(contract::type contr_type,
                       char const * message,
                       char const * expr,
                       char const * func,
                       char const * file,
                       std::size_t line);
 
-using violation_handler = std::function<void (type contr_type,
+using violation_handler = std::function<void (contract::type contr_type,
                                               char const * message,
                                               char const * expr,
                                               char const * func,
