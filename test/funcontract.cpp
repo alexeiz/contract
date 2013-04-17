@@ -100,6 +100,7 @@ BOOST_AUTO_TEST_CASE(fun_contract_precondition)
         contract::type::precondition);
 
     BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true, "message"));
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_invariant)
@@ -120,6 +121,7 @@ BOOST_AUTO_TEST_CASE(fun_contract_invariant)
         contract::type::invariant);
 
     BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true, "message"));
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
@@ -140,6 +142,7 @@ BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
         contract::type::postcondition);
 
     BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true, "message"));
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_all)
