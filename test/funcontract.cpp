@@ -50,36 +50,48 @@ void fun_contract_test_all(bool pre, bool inv, bool post)
 template <typename Func>
 void check_throw_on_contract_violation(Func f, contract::type type)
 {
+    bool caught_exception = false;
+
     try
     {
         f();
     }
     catch (test::contract_error & e)
     {
+        caught_exception = true;
         BOOST_CHECK(e.type() == type);
     }
     catch (...)
     {
+        caught_exception = true;
         BOOST_FAIL("expected to catch test::contract_error");
     }
+
+    BOOST_CHECK(caught_exception);
 }
 
 template <typename Func>
 void check_throw_on_contract_violation(Func f, contract::type type, char const * msg)
 {
+    bool caught_exception = false;
+
     try
     {
         f();
     }
     catch (test::contract_error & e)
     {
+        caught_exception = true;
         BOOST_CHECK(e.type() == type);
         BOOST_CHECK(e.message() == std::string(msg));
     }
     catch (...)
     {
+        caught_exception = true;
         BOOST_FAIL("expected to catch test::contract_error");
     }
+
+    BOOST_CHECK(caught_exception);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_precondition)
