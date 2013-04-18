@@ -21,22 +21,21 @@ BOOST_AUTO_TEST_CASE(set_violation_handler)
 
     try
     {
-        contract::handle_violation(contract::type::postcondition,
-                                   "1 message",
-                                   "2 expr",
-                                   "3 func",
-                                   "4 file",
-                                   5);
+        contract::handle_violation(
+            contract::violation_context{contract::type::postcondition,
+                                        "1 message",
+                                        "2 expr",
+                                        "3 file",
+                                        4});
     }
     catch (test::contract_error & e)
     {
         caught_exception = true;
         BOOST_CHECK(e.type() == contract::type::postcondition);
         BOOST_CHECK_EQUAL(e.message(), "1 message");
-        BOOST_CHECK_EQUAL(e.expr(), "2 expr");
-        BOOST_CHECK_EQUAL(e.func(), "3 func");
-        BOOST_CHECK_EQUAL(e.file(), "4 file");
-        BOOST_CHECK_EQUAL(e.line(), 5);
+        BOOST_CHECK_EQUAL(e.condition(), "2 expr");
+        BOOST_CHECK_EQUAL(e.file(), "3 file");
+        BOOST_CHECK_EQUAL(e.line(), 4);
     }
     catch (...)
     {

@@ -92,15 +92,10 @@ std::size_t my_strlen(char const * str)
 // example 4: custom contract violation handler
 
 contract::violation_handler old_handler;
-void my_contract_violation_handler(contract::type type,
-                                   char const * message,
-                                   char const * expr,
-                                   char const * func,
-                                   char const * file,
-                                   std::size_t line)
+void my_contract_violation_handler(contract::violation_context const & context)
 {
     std::cerr << "in my_contract_violation_handler:\n";
-    old_handler(type, message, expr, func, file, line);
+    old_handler(context);
 }
 
 int main()

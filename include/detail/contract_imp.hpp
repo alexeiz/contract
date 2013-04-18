@@ -43,16 +43,16 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
-#define contract_check__(TYPE, EXPR, MSG)                       \
-    do {                                                        \
-        if (contract_context__.check_ ## TYPE && !(EXPR))       \
-            contract::handle_violation(contract::type:: TYPE,   \
-                                       MSG,                     \
-                                       #EXPR,                   \
-                                       __func__,                \
-                                       __FILE__,                \
-                                       __LINE__);               \
-    } while (0)                                                 \
+#define contract_check__(TYPE, COND, MSG)                           \
+    do {                                                            \
+        if (contract_context__.check_ ## TYPE && !(COND))           \
+            contract::handle_violation(                             \
+                contract::violation_context(contract::type:: TYPE,  \
+                                            MSG,                    \
+                                            #COND,                  \
+                                            __FILE__,               \
+                                            __LINE__));             \
+    } while (0)                                                     \
 
 // macros for variadic argument dispatch
 
@@ -192,19 +192,14 @@ struct contractor<T, true>
 //
 
 inline
-void default_handler(type contr_type,
-                     char const * message,
-                     char const * expr,
-                     char const * func,
-                     char const * file,
-                     std::size_t line)
+void default_handler(violation_context const & context)
 {
-    std::cerr << file << ':' << line << ": error: "
-              << "contract violation of type '";
+    std::cerr << context.file << ':' << context.line
+              << ": error: contract violation of type '";
 
     char const * type_str;
 
-    switch (contr_type)
+    switch (context.contract_type)
     {
     case type::precondition:
         type_str = "precondition";
@@ -218,9 +213,8 @@ void default_handler(type contr_type,
     }
 
     std::cerr << type_str << "'\n"
-              << "message:   " << message << "\n"
-              << "condition: " << expr << "\n"
-              << "function:  " << func << std::endl;
+              << "message:   " << context.message << "\n"
+              << "condition: " << context.condition << std::endl;
 
     std::abort();
 }
@@ -240,19 +234,9 @@ violation_handler handler_holder<T>::current_handler{default_handler};
 }  // namespace detail
 
 inline
-void handle_violation(type contr_type,
-                      char const * message,
-                      char const * expr,
-                      char const * func,
-                      char const * file,
-                      std::size_t line)
+void handle_violation(violation_context const & context)
 {
-    detail::handler_holder<>::current_handler(contr_type,
-                                              message,
-                                              expr,
-                                              func,
-                                              file,
-                                              line);
+    detail::handler_holder<>::current_handler(context);
 
     // if the handler returns, abort anyway to satisfy the [[noreturn]] contract
     std::abort();

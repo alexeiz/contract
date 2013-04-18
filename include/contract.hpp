@@ -13,18 +13,18 @@
 
 #define precondition(...)         concat__(precondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
-#define precondition1(expr)       precondition2(expr, #expr)
-#define precondition2(expr, msg)  contract_check__(precondition, expr, msg)
+#define precondition1(cond)       precondition2(cond, #cond)
+#define precondition2(cond, msg)  contract_check__(precondition, cond, msg)
 
 #define postcondition(...)        concat__(postcondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
-#define postcondition1(expr)      postcondition2(expr, #expr)
-#define postcondition2(expr, msg) contract_check__(postcondition, expr, msg)
+#define postcondition1(cond)      postcondition2(cond, #cond)
+#define postcondition2(cond, msg) contract_check__(postcondition, cond, msg)
 
 #define invariant(...)            concat__(invariant, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
-#define invariant1(expr)          invariant2(expr, #expr)
-#define invariant2(expr, msg)     contract_check__(invariant, expr, msg)
+#define invariant1(cond)          invariant2(cond, #cond)
+#define invariant2(cond, msg)     contract_check__(invariant, cond, msg)
 
 namespace contract
 {
@@ -39,20 +39,31 @@ enum class type
     invariant
 };
 
-[[noreturn]]
-void handle_violation(contract::type contr_type,
-                      char const * message,
-                      char const * expr,
-                      char const * func,
-                      char const * file,
-                      std::size_t line);
+struct violation_context
+{
+    violation_context(contract::type t,
+                      char const * m,
+                      char const * c,
+                      char const * f,
+                      std::size_t l)
+        : contract_type{t}
+        , message{m}
+        , condition{c}
+        , file{f}
+        , line{l}
+    {}
 
-using violation_handler = std::function<void (contract::type contr_type,
-                                              char const * message,
-                                              char const * expr,
-                                              char const * func,
-                                              char const * file,
-                                              std::size_t line)>;
+    contract::type contract_type;
+    char const * message;
+    char const * condition;
+    char const * file;
+    std::size_t line;
+};
+
+[[noreturn]]
+void handle_violation(violation_context const & context);
+
+using violation_handler = std::function<void (violation_context const &)>;
 
 violation_handler set_handler(violation_handler new_handler);
 violation_handler get_handler();

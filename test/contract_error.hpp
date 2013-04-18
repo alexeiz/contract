@@ -13,26 +13,16 @@ namespace test
 
 struct contract_error : std::exception
 {
-    contract_error(contract::type contr_type,
-                   char const * message,
-                   char const * expr,
-                   char const * func,
-                   char const * file,
-                   std::size_t line)
-        : type_(contr_type)
-        , message_(message)
-        , expr_(expr)
-        , func_(func)
-        , file_(file)
-        , line_(line)
+    contract_error(contract::violation_context const & context)
+        : context_{context}
     {
         std::ostringstream err;
-        err << file << ':' << line << ": error: "
-            << "contract violation of type '";
+        err << context.file << ':' << context.line
+            << ": error: contract violation of type '";
 
         char const * type_str;
 
-        switch (contr_type)
+        switch (context.contract_type)
         {
         case contract::type::precondition:
             type_str = "precondition";
@@ -46,9 +36,8 @@ struct contract_error : std::exception
         }
 
         err << type_str << "'\n"
-            << "message:   " << message << "\n"
-            << "condition: " << expr << "\n"
-            << "function:  " << func << std::endl;
+            << "message:   " << context.message << "\n"
+            << "condition: " << context.condition << std::endl;
 
         error_ = err.str();
     }
@@ -58,32 +47,21 @@ struct contract_error : std::exception
         return error_.c_str();
     }
 
-    contract::type type() const { return type_; }
-    char const * message() const { return message_; }
-    char const * expr() const { return expr_; }
-    char const * func() const { return func_; }
-    char const * file() const { return file_; }
-    std::size_t line() const { return line_; }
+    contract::type type() const { return context_.contract_type; }
+    char const * message() const { return context_.message; }
+    char const * condition() const { return context_.condition; }
+    char const * file() const { return context_.file; }
+    std::size_t line() const { return context_.line; }
 
 private:
-    contract::type type_;
-    char const * message_;
-    char const * expr_;
-    char const * func_;
-    char const * file_;
-    std::size_t line_;
+    contract::violation_context context_;
     std::string error_;
 };
 
 inline
-void throw_contract_error(contract::type contr_type,
-                          char const * message,
-                          char const * expr,
-                          char const * func,
-                          char const * file,
-                          std::size_t line)
+void throw_contract_error(contract::violation_context const & context)
 {
-    throw contract_error(contr_type, message, expr, func, file, line);
+    throw contract_error(context);
 }
 
 template <typename = void>
