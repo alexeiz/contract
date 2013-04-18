@@ -29,7 +29,7 @@ public:
     {
         int withdrawn = 0;
 
-        contract(meth)
+        contract(this)
         {
             precondition(ammount >= 0);
             postcondition(withdrawn >= 0);
@@ -42,7 +42,7 @@ public:
 
     int deposit(int ammount)
     {
-        contract(meth) { precondition(ammount >= 0); };
+        contract(this) { precondition(ammount >= 0); };
 
         balance_ += ammount;
         return balance_;
@@ -50,7 +50,7 @@ public:
 
     int balance() const
     {
-        contract(meth) {};
+        contract(this) {};
         return balance_;
     }
 

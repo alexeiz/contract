@@ -13,7 +13,7 @@
         contract::detail::contractor<void *>(0)                              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_meth__                                                      \
+#define contract_this__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(this)              \

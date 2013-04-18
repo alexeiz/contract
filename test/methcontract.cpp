@@ -18,7 +18,7 @@ public:
     {
         int old_balance = balance_;
 
-        contract(meth)
+        contract(this)
         {
             precondition(bal >= 0);
             invariant(balance_ > 0);

@@ -27,7 +27,7 @@ public:
 
     int balance() const
     {
-        contract(meth) {};
+        contract(this) {};
         return balance_;
     }
 
@@ -37,7 +37,7 @@ public:
             balance_ = bal;
         else
         {
-            contract(meth) {};
+            contract(this) {};
             balance_ = bal;  // the class contract is checked both on method
                              // entry and exit
         }
