@@ -94,7 +94,7 @@ struct fun_contract
         contr_(contract_context{true, false, enter});
     }
 
-    ~fun_contract()
+    ~fun_contract() noexcept(false)
     {
         contr_(contract_context{false, true, exit_});
     }
@@ -114,7 +114,7 @@ struct class_contract_base
             obj_->class_contract__(contract_context{false, false, true});
     }
 
-    ~class_contract_base()
+    ~class_contract_base() noexcept(false)
     {
         if (exit_)
             obj_->class_contract__(contract_context{false, false, true});
@@ -227,7 +227,7 @@ void default_handler(type contr_type,
 
 // Holder for the currently installed contract failure handler.
 // Templated with a dummy type to be able to keep it in the header file.
-template <typename T = void>
+template <typename = void>
 struct handler_holder
 {
     static
