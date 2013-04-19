@@ -98,6 +98,28 @@ void my_contract_violation_handler(contract::violation_context const & context)
     old_handler(context);
 }
 
+// example 5: loop invariant
+
+int hash(char const * str)
+{
+    char const * end = str + std::strlen(str);
+
+    int hash = 743;
+    for (char const * p = str; p != end; ++p)
+    {
+        contract(loop)
+        {
+            invariant(p >= str);
+            invariant(p < end);
+            invariant(hash < 0x10000);
+        }
+
+        hash = ((hash << 5) ^ *p) & 0xffff;
+    }
+
+    return hash;
+}
+
 int main()
 {
     // example 4
@@ -114,6 +136,9 @@ int main()
 
     // example 2
     acc = make_account_with_fee(15);
+
+    // example 5
+    hash("abcde");
 }
 
 // Copyright Alexei Zakharov, 2013.

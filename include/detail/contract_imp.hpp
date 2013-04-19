@@ -43,6 +43,10 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
+#define contract_loop__                                                      \
+    if (contract::detail::contract_context                                   \
+        contract_context__{false, false, true})                              \
+
 #define contract_check__(TYPE, COND, MSG)                           \
     do {                                                            \
         if (contract_context__.check_ ## TYPE && !(COND))           \
@@ -77,6 +81,9 @@ struct contract_context
         , check_postcondition{post}
         , check_invariant{inv}
     {}
+
+    explicit
+    operator bool() { return true; }
 
     bool check_precondition;
     bool check_postcondition;
