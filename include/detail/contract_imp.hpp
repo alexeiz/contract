@@ -35,10 +35,10 @@
 
 #define contract_class__                                                     \
     template <typename T>                                                    \
-        friend class contract::detail::class_contract_base;                  \
+        friend struct contract::detail::class_contract_base;                 \
                                                                              \
     template <typename T>                                                    \
-    friend class contract::detail::has_class_contract;                       \
+    friend struct contract::detail::has_class_contract;                      \
                                                                              \
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
@@ -95,7 +95,7 @@ struct fun_contract
 {
     explicit
     fun_contract(ContrFunc f, bool enter = true, bool exit = true)
-        : contr_{f}
+        : contr_(f)
         , exit_{exit}
     {
         contr_(contract_context{true, false, enter});
