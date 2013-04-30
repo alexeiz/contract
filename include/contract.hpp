@@ -32,6 +32,13 @@ namespace contract
 // interface: violation handler
 //
 
+// Values for types of contract checks.
+//
+// Enumeration that defines the values for types of contract checks.  These
+// types correspond to the identically named contract check macros.  This
+// enumeration is not usable directly.  Instead, contract check macros pass the
+// appropriate enumeration value to the contractor of the <violation_context>
+// class.
 enum class type
 {
     precondition,
@@ -39,6 +46,10 @@ enum class type
     invariant
 };
 
+// Context of the contract violation.
+//
+// Defines the context data passed to the <handle_violation> function when a
+// contract check macro detects a contract violation.
 struct violation_context
 {
     violation_context(contract::type t,
@@ -53,13 +64,21 @@ struct violation_context
         , line{l}
     {}
 
-    contract::type contract_type;
-    char const * message;
-    char const * condition;
-    char const * file;
-    std::size_t line;
+    contract::type contract_type; // type of the failed contract check macro
+    char const * message;         // message passed to the contract check macro
+    char const * condition;       // condition of the contract check
+    char const * file;            // file in which the contract check occures
+    std::size_t line;             // line on which the contact check occures
 };
 
+// Handle contract violation.
+//
+// Handle the contract violation.  A contract is violated when a condition
+// expression passed to a contract check macro evaluates to `false`.
+//
+// @context  the context data for the contract violation.
+// @returns  this function doesn't return; it can either call another
+//           `[[noretur]]` function or exit via an exception.
 [[noreturn]]
 void handle_violation(violation_context const & context);
 
