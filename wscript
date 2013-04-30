@@ -1,3 +1,4 @@
+import sys
 import os.path
 
 top = '.'
@@ -21,7 +22,10 @@ def configure(cfg):
     if cfg.env.get_flat('CXX').startswith('clang'):
         cfg.env.append_unique('CXXFLAGS', ['-stdlib=libc++'])
         cfg.env.append_unique('LINKFLAGS', ['-stdlib=libc++'])
-        cfg.env.append_unique('LIB_libsupc++', ['supc++'])
+
+        if sys.platform != 'darwin':
+            # clang depends on gcc c++ abi from libsupc++
+            cfg.env.append_unique('LIB_libsupc++', ['supc++'])
 
 def build(bld):
     # build the source directory
