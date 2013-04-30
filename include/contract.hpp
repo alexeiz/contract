@@ -82,9 +82,24 @@ struct violation_context
 [[noreturn]]
 void handle_violation(violation_context const & context);
 
+// Type alias for the contract violation handler function.
 using violation_handler = std::function<void (violation_context const &)>;
 
+// Set contract violation handler.
+//
+// Set the handler function which is invoked when a contract violation is
+// detected by a contract check macro.
+//
+// @new_handler  new handler function.
+// @returns      previous handler function.
 violation_handler set_handler(violation_handler new_handler);
+
+// Get current contract violation handler.
+//
+// Get the handler function which is invoked when a contract violation is
+// detect by a contract check macro.
+//
+// @returns  current contract violation handler function.
 violation_handler get_handler();
 
 }  // namespace contract
