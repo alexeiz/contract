@@ -78,7 +78,7 @@ struct violation_context
 //
 // @context  the context data for the contract violation.
 // @returns  this function doesn't return; it can either call another
-//           `[[noretur]]` function or exit via an exception.
+//           `[[noreturn]]` function or exit via an exception.
 [[noreturn]]
 void handle_violation(violation_context const & context);
 
