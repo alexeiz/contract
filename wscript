@@ -1,3 +1,4 @@
+import sys
 import os.path
 
 top = '.'
@@ -9,6 +10,7 @@ optflags = ''
 warnflags = '-Wall -Wno-attributes'
 
 cxxflags = ' '.join([defflags, dbgflags, optflags, warnflags]);
+linkflags = ' '.join([dbgflags, optflags]);
 
 def options(opt):
     opt.load('compiler_cxx boost waf_unit_test')
@@ -16,6 +18,14 @@ def options(opt):
 def configure(cfg):
     cfg.load('compiler_cxx boost waf_unit_test')
     cfg.check_boost('system unit_test_framework')
+
+    if cfg.env.get_flat('CXX').startswith('clang'):
+        cfg.env.append_unique('CXXFLAGS', ['-stdlib=libc++'])
+        cfg.env.append_unique('LINKFLAGS', ['-stdlib=libc++'])
+
+        if sys.platform != 'darwin':
+            # clang depends on gcc c++ abi from libsupc++
+            cfg.env.append_unique('LIB_libsupc++', ['supc++'])
 
 def build(bld):
     # build the source directory
@@ -25,9 +35,10 @@ def build(bld):
         bld.stlib(source = sources,
                   target = 'contract',
                   cxxflags = cxxflags,
+                  linkflags = linkflags,
                   includes = 'include',
                   export_includes = 'include',
-                  use = 'BOOST',
+                  use = 'BOOST libsupc++',
                   install_path = os.path.join('${PREFIX}', 'lib'))
 
     # build tests
