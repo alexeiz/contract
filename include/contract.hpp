@@ -27,8 +27,11 @@
 // This macro defines a precondition check for a contract block defined by the
 // `contract(...)` macro.  Precondition is checked in the following situations:
 //   `class` - on entry to each method with a `contract(this) or contract(dtor)` block,
-//   `this, ctor, dtor, fun` - on method or function entry,
-//   `loop` - not checked.
+//   `this`  - on method entry,
+//   `ctor`  - on constructor entry,
+//   `dtor`  - on destructor entry,
+//   `fun`   - on function entry,
+//   `loop`  - not checked.
 //
 // @cond  precondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
@@ -43,8 +46,11 @@
 // This macro defines a postcondition check for a contract block defined by the
 // `contract(...)` macro.  Precondition is checked in the following situations:
 //   `class` - on exit of each method with a `contract(this) or contract(ctor)` block,
-//   `this, ctor, dtor, fun` - on method or function exit,
-//   `loop` - not checked.
+//   `this`  - on method exit,
+//   `ctor`  - on constructor exit,
+//   `dtor`  - on destructor exit,
+//   `fun`   - on function exit,
+//   `loop`  - not checked.
 //
 // @cond  postcondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
@@ -61,10 +67,11 @@
 //   `class` - on entry and exit of each method with a `contract(this) block,
 //             on exit of constructors with a `contract(ctor)` block,
 //             on entry to destructors with a `contract(dtor)` block,
-//   `this, fun` - on method or function entry and exit,
-//   `ctor` - on constructor exit,
-//   `dtor` - on destructor entry,
-//   `loop` - on each loop iteration.
+//   `this`  - on method entry and exit,
+//   `ctor`  - on constructor exit,
+//   `dtor`  - on destructor entry,
+//   `fun`   - on function entry and exit,
+//   `loop`  - on each loop iteration.
 //
 // @cond  postcondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
