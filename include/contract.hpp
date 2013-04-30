@@ -9,18 +9,66 @@
 // interface: macros
 //
 
+// Define contract block.
+//
+// This macro defines a contract block for a specified `scope`.
+//
+// @scope  the scope of the contract:
+//             `class` - defines a contract for a class,
+//             `this`  - defines a contract for a method,
+//             `ctor`  - defines a contract for a constructor,
+//             `dtor`  - defines a contract for a destructor,
+//             `fun`   - defines a free function contract,
+//             `loop`  - defines a loop invariant contract.
 #define contract(scope)           contract_ ## scope ## __
 
+// Define precondition contract.
+//
+// This macro defines a precondition check for a contract block defined by the
+// `contract(...)` macro.  Precondition is checked in the following situations:
+//   `class` - on entry to each method with a `contract(this) or contract(dtor)` block,
+//   `this, ctor, dtor, fun` - on method or function entry,
+//   `loop` - not checked.
+//
+// @cond  precondition expression that should evalate to `true`.
+// @msg   message which is reported to the contract violation handler if `cond`
+//        evaluates to `false`.
 #define precondition(...)         concat__(precondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define precondition1(cond)       precondition2(cond, #cond)
 #define precondition2(cond, msg)  contract_check__(precondition, cond, msg)
 
+// Define postcondition contract.
+//
+// This macro defines a postcondition check for a contract block defined by the
+// `contract(...)` macro.  Precondition is checked in the following situations:
+//   `class` - on exit of each method with a `contract(this) or contract(ctor)` block,
+//   `this, ctor, dtor, fun` - on method or function exit,
+//   `loop` - not checked.
+//
+// @cond  postcondition expression that should evalate to `true`.
+// @msg   message which is reported to the contract violation handler if `cond`
+//        evaluates to `false`.
 #define postcondition(...)        concat__(postcondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define postcondition1(cond)      postcondition2(cond, #cond)
 #define postcondition2(cond, msg) contract_check__(postcondition, cond, msg)
 
+// Define invariant contract.
+//
+// This macro defines an invariant check for a contract block defined by the
+// `contract(...)` macro.  Invariant is checked in the following situations:
+//   `class` - on entry and exit of each method with a `contract(this) block,
+//             on exit of constructors with a `contract(ctor)` block,
+//             on entry to destructors with a `contract(dtor)` block,
+//   `this, fun` - on method or function entry and exit,
+//   `ctor` - on constructor exit,
+//   `dtor` - on destructor entry,
+//   `loop` - on each loop iteration.
+//
+// @cond  postcondition expression that should evalate to `true`.
+// @msg   message which is reported to the contract violation handler if `cond`
+//        evaluates to `false`.
 #define invariant(...)            concat__(invariant, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define invariant1(cond)          invariant2(cond, #cond)
