@@ -8,17 +8,20 @@
 // implementation: macros
 //
 
+// Define contract for a free function.
 #define contract_fun__                                                       \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<void *>(0)                              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define contract for a method.
 #define contract_this__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(this)              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define contract for a constructor.
 #define contract_ctor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
@@ -26,6 +29,7 @@
                 this, false, true)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define contract for a destructor.
 #define contract_dtor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
@@ -33,6 +37,7 @@
                 this, true, false)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define a class contract.
 #define contract_class__                                                     \
     template <typename T>                                                    \
         friend struct contract::detail::class_contract_base;                 \
@@ -43,10 +48,12 @@
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
+// Define a loop invariant contract.
 #define contract_loop__                                                      \
     if (contract::detail::contract_context                                   \
         contract_context__{false, false, true})                              \
 
+// Contract check main implementation.
 #define contract_check__(TYPE, COND, MSG)                           \
     do {                                                            \
         if (contract_context__.check_ ## TYPE && !(COND))           \
@@ -74,6 +81,8 @@ namespace detail
 // implementation: code behind macros
 //
 
+// Context in which a contract check is done.  Controls which parts of the
+// contract are checked.
 struct contract_context
 {
     contract_context(bool pre, bool post, bool inv)
@@ -90,6 +99,11 @@ struct contract_context
     bool check_invariant;
 };
 
+// Performs the check for a function or method contract.  Parameterized with
+// `ContrFunc` functor defining the actual contract in terms of <precondition>,
+// <postcondition> and <invariant> macros.  Precondition is checked on function
+// entry, postcondition is checked on function exit, and invariant is checked
+// on both entry and exit unless specified otherwise.
 template <typename ContrFunc>
 struct fun_contract
 {
@@ -110,6 +124,11 @@ struct fun_contract
     bool exit_;
 };
 
+// A base class that performs the check for a class contract.  Parameterized
+// with `ContrFunc` functor defining the actual contract in terms of
+// <precondition>, <postcondition> and <invariant> macros.  Precondition and
+// postcondition are not checked.  Invariant is checked on entry and exit if
+// specified.
 template <typename T>
 struct class_contract_base
 {
@@ -131,6 +150,8 @@ struct class_contract_base
     bool exit_;
 };
 
+// Performs the check for a method and class contract.  Combines the
+// functionality of <class_contract_base> and <fun_contract> classes.
 template <typename T, typename ContrFunc>
 struct class_contract
     : class_contract_base<T>
@@ -145,6 +166,9 @@ struct class_contract
     {}
 };
 
+// Template metafunction that detects if a class has a class contract defined.
+// Defines `type` as `std::true_type` if the class contract is detected and
+// `std::false_type` otherwise.
 template <typename T>
 struct has_class_contract
 {
@@ -158,9 +182,14 @@ struct has_class_contract
     using type = decltype(test<T>(0));
 };
 
+// Defines a bootstrapper for a contract check implementation.  When combined
+// with a `Func` functor defining the actual contract (by means of overloaded
+// `operator+`) produces a concrete implementation for the contract check.
 template <typename T, bool = has_class_contract<T>::type::value>
 struct contractor;
 
+// Specialization for a function contract or a method contract without a class
+// contract.
 template <typename T>
 struct contractor<T, false>
 {
@@ -174,6 +203,7 @@ struct contractor<T, false>
     }
 };
 
+// Specialization for a method contract with a class contract.
 template <typename T>
 struct contractor<T, true>
 {
@@ -198,6 +228,9 @@ struct contractor<T, true>
 // implementation: violation handler
 //
 
+// Defines a default contract violation handler.  Prints the information about
+// the contract violation to the standard error and abort the program
+// execution.
 inline
 void default_handler(violation_context const & context)
 {
