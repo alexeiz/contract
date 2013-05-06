@@ -42,15 +42,12 @@ def build(bld):
                   install_path = os.path.join('${PREFIX}', 'lib'))
 
     # build tests
-    for t in bld.path.ant_glob('test/*.cpp'):
-        source = t.srcpath()
-        target = os.path.splitext(source)[0]
-        bld.program(features = 'cxx cxxprogram test',
-                    source = source,
-                    target = target,
-                    cxxflags = cxxflags,
-                    use = 'BOOST contract',
-                    install_path = None)
+    bld.program(features = 'cxx cxxprogram test',
+                source = bld.path.ant_glob('test/*.cpp'),
+                target = 'contract_tests',
+                cxxflags = cxxflags,
+                use = 'BOOST contract',
+                install_path = None)
 
     # report test failures
     bld.add_post_fun(test_post_results)

@@ -1,10 +1,15 @@
 #include <contract.hpp>
 
+#include <boost/test/unit_test.hpp>
+
 #include <iostream>
 #include <cstring>
 #include <cassert>
 
 // example 1: class and method contracts
+
+namespace
+{
 
 class account
 {
@@ -120,7 +125,9 @@ int hash(char const * str)
     return hash;
 }
 
-int main()
+}
+
+BOOST_AUTO_TEST_CASE(examples)
 {
     // example 4
     old_handler = contract::set_handler(my_contract_violation_handler);

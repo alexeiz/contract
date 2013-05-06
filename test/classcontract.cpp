@@ -2,10 +2,8 @@
 
 #include "contract_error.hpp"
 
-#define BOOST_TEST_MODULE classcontract
-#define BOOST_TEST_MAIN
-#define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
+namespace
+{
 
 class account
 {
@@ -49,6 +47,8 @@ private:
 private:
     int balance_;
 };
+
+}
 
 BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
 {

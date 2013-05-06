@@ -2,10 +2,8 @@
 
 #include "contract_error.hpp"
 
-#define BOOST_TEST_MODULE ctorcontract
-#define BOOST_TEST_MAIN
-#define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
+namespace
+{
 
 class account
 {
@@ -26,27 +24,6 @@ private:
     int balance_;
 };
 
-template <typename Func>
-void check_throw_on_contract_violation(Func f, contract::type type)
-{
-    bool caught_exception = false;
-
-    try
-    {
-        f();
-    }
-    catch (test::contract_error & e)
-    {
-        caught_exception = true;
-        BOOST_CHECK(e.type() == type);
-    }
-    catch (...)
-    {
-        caught_exception = true;
-        BOOST_FAIL("expected to catch test::contract_error");
-    }
-
-    BOOST_CHECK(caught_exception);
 }
 
 BOOST_AUTO_TEST_CASE(ctor_contract)
@@ -55,10 +32,10 @@ BOOST_AUTO_TEST_CASE(ctor_contract)
 
     BOOST_CHECK_NO_THROW(account(10));
 
-    check_throw_on_contract_violation([] { account(0); },
-                                      contract::type::precondition);
-    check_throw_on_contract_violation([] { account(0, true); },
-                                      contract::type::postcondition);
+    test::check_throw_on_contract_violation([] { account(0); },
+                                            contract::type::precondition);
+    test::check_throw_on_contract_violation([] { account(0, true); },
+                                            contract::type::postcondition);
 }
 
 // Copyright Alexei Zakharov, 2013.

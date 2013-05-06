@@ -3,6 +3,8 @@
 
 #include <contract.hpp>
 
+#include <boost/test/unit_test.hpp>
+
 #include <exception>
 #include <stdexcept>
 #include <sstream>
@@ -96,6 +98,53 @@ struct contract_handler_frame
 
     contract::violation_handler old_handler_;
 };
+
+template <typename Func>
+void check_throw_on_contract_violation(Func f, contract::type type)
+{
+    bool caught_exception = false;
+
+    try
+    {
+        f();
+    }
+    catch (test::contract_error & e)
+    {
+        caught_exception = true;
+        BOOST_CHECK(e.type() == type);
+    }
+    catch (...)
+    {
+        caught_exception = true;
+        BOOST_FAIL("expected to catch test::contract_error");
+    }
+
+    BOOST_CHECK(caught_exception);
+}
+
+template <typename Func>
+void check_throw_on_contract_violation(Func f, contract::type type, char const * msg)
+{
+    bool caught_exception = false;
+
+    try
+    {
+        f();
+    }
+    catch (test::contract_error & e)
+    {
+        caught_exception = true;
+        BOOST_CHECK(e.type() == type);
+        BOOST_CHECK(e.message() == std::string(msg));
+    }
+    catch (...)
+    {
+        caught_exception = true;
+        BOOST_FAIL("expected to catch test::contract_error");
+    }
+
+    BOOST_CHECK(caught_exception);
+}
 
 }
 
