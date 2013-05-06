@@ -2,6 +2,8 @@
 
 #include "contract_error.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 void loop_invariant_success()
 {
     for (int i = 0; i != 10; ++i)

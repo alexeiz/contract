@@ -2,6 +2,8 @@
 
 #include "contract_error.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 BOOST_AUTO_TEST_CASE(get_default_handler)
 {
     contract::violation_handler default_handler{contract::get_handler()};

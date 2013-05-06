@@ -2,6 +2,8 @@
 
 #include "contract_error.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 namespace
 {
 

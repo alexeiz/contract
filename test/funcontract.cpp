@@ -2,6 +2,8 @@
 
 #include "contract_error.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 void fun_contract_test_precondition(bool par)
 {
     contract(fun) { precondition(par); };
