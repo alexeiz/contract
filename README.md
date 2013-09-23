@@ -313,12 +313,12 @@ Lib.Contract uses the waf-based build system.  The simplified build/install
 process with waf looks like this:
 
     # in the root directory of the repo
-    $ tools/waf configure      # configure the build
-    $ tools/waf build          # do the build
-    $ tools/waf test           # run tests
-    $ sudo tools/waf install   # install headers using the defaublt prefix (/usr/local)
+    $ tools/waf configure          # configure the build (--prefix=PREFIX for installation prefix)
+    $ tools/waf build              # build library and run tests
+    $ tools/waf build --notests    # build without tests
+    $ tools/waf install            # install headers using the specified prefix (default /usr/local)
 
-Run `tools/waf help` for more configuration and build options.  Waf requires
+Run `tools/waf --help` for more configuration and build options.  Waf requires
 Python 2.6 or later.
 
 ## Requirements ##
