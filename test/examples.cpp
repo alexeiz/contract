@@ -1,10 +1,15 @@
 #include <contract.hpp>
 
+#include <boost/test/unit_test.hpp>
+
 #include <iostream>
 #include <cstring>
 #include <cassert>
 
 // example 1: class and method contracts
+
+namespace
+{
 
 class account
 {
@@ -29,7 +34,7 @@ public:
     {
         int withdrawn = 0;
 
-        contract(meth)
+        contract(this)
         {
             precondition(ammount >= 0);
             postcondition(withdrawn >= 0);
@@ -42,7 +47,7 @@ public:
 
     int deposit(int ammount)
     {
-        contract(meth) { precondition(ammount >= 0); };
+        contract(this) { precondition(ammount >= 0); };
 
         balance_ += ammount;
         return balance_;
@@ -50,7 +55,7 @@ public:
 
     int balance() const
     {
-        contract(meth) {};
+        contract(this) {};
         return balance_;
     }
 
@@ -92,18 +97,37 @@ std::size_t my_strlen(char const * str)
 // example 4: custom contract violation handler
 
 contract::violation_handler old_handler;
-void my_contract_violation_handler(contract::type type,
-                                   char const * message,
-                                   char const * expr,
-                                   char const * func,
-                                   char const * file,
-                                   std::size_t line)
+void my_contract_violation_handler(contract::violation_context const & context)
 {
     std::cerr << "in my_contract_violation_handler:\n";
-    old_handler(type, message, expr, func, file, line);
+    old_handler(context);
 }
 
-int main()
+// example 5: loop invariant
+
+int hash(char const * str)
+{
+    char const * end = str + std::strlen(str);
+
+    int hash = 743;
+    for (char const * p = str; p != end; ++p)
+    {
+        contract(loop)
+        {
+            invariant(p >= str);
+            invariant(p < end);
+            invariant(hash < 0x10000);
+        }
+
+        hash = ((hash << 5) ^ *p) & 0xffff;
+    }
+
+    return hash;
+}
+
+}
+
+BOOST_AUTO_TEST_CASE(examples)
 {
     // example 4
     old_handler = contract::set_handler(my_contract_violation_handler);
@@ -119,6 +143,9 @@ int main()
 
     // example 2
     acc = make_account_with_fee(15);
+
+    // example 5
+    hash("abcde");
 }
 
 // Copyright Alexei Zakharov, 2013.

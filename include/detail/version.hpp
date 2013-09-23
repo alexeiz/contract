@@ -5,7 +5,7 @@
 #define stringify_imp__(x) #x
 
 #define CONTRACT_LIB_VERSION_MAJOR 0
-#define CONTRACT_LIB_VERSION_MINOR 1
+#define CONTRACT_LIB_VERSION_MINOR 2
 #define CONTRACT_LIB_VERSION_PATCH 0
 
 #define CONTRACT_LIB_VERSION_STRING              \

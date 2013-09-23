@@ -8,17 +8,20 @@
 // implementation: macros
 //
 
+// Define contract for a free function.
 #define contract_fun__                                                       \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<void *>(0)                              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
-#define contract_meth__                                                      \
+// Define contract for a method.
+#define contract_this__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
             std::remove_reference<decltype(*this)>::type>(this)              \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define contract for a constructor.
 #define contract_ctor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
@@ -26,6 +29,7 @@
                 this, false, true)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define contract for a destructor.
 #define contract_dtor__                                                      \
     auto contract_obj__ =                                                    \
         contract::detail::contractor<                                        \
@@ -33,26 +37,33 @@
                 this, true, false)                                           \
         + [&](contract::detail::contract_context const & contract_context__) \
 
+// Define a class contract.
 #define contract_class__                                                     \
     template <typename T>                                                    \
-        friend class contract::detail::class_contract_base;                  \
+        friend struct contract::detail::class_contract_base;                 \
                                                                              \
     template <typename T>                                                    \
-    friend class contract::detail::has_class_contract;                       \
+    friend struct contract::detail::has_class_contract;                      \
                                                                              \
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
 
-#define contract_check__(TYPE, EXPR, MSG)                       \
-    do {                                                        \
-        if (contract_context__.check_ ## TYPE && !(EXPR))       \
-            contract::handle_violation(contract::type:: TYPE,   \
-                                       MSG,                     \
-                                       #EXPR,                   \
-                                       __func__,                \
-                                       __FILE__,                \
-                                       __LINE__);               \
-    } while (0)                                                 \
+// Define a loop invariant contract.
+#define contract_loop__                                                      \
+    if (contract::detail::contract_context                                   \
+        contract_context__{false, false, true})                              \
+
+// Contract check main implementation.
+#define contract_check__(TYPE, COND, MSG)                           \
+    do {                                                            \
+        if (contract_context__.check_ ## TYPE && !(COND))           \
+            contract::handle_violation(                             \
+                contract::violation_context(contract::type:: TYPE,  \
+                                            MSG,                    \
+                                            #COND,                  \
+                                            __FILE__,               \
+                                            __LINE__));             \
+    } while (0)                                                     \
 
 // macros for variadic argument dispatch
 
@@ -70,6 +81,8 @@ namespace detail
 // implementation: code behind macros
 //
 
+// Context in which a contract check is done.  Controls which parts of the
+// contract are checked.
 struct contract_context
 {
     contract_context(bool pre, bool post, bool inv)
@@ -78,23 +91,31 @@ struct contract_context
         , check_invariant{inv}
     {}
 
+    explicit
+    operator bool() { return true; }
+
     bool check_precondition;
     bool check_postcondition;
     bool check_invariant;
 };
 
+// Performs the check for a function or method contract.  Parameterized with
+// `ContrFunc` functor defining the actual contract in terms of <precondition>,
+// <postcondition> and <invariant> macros.  Precondition is checked on function
+// entry, postcondition is checked on function exit, and invariant is checked
+// on both entry and exit unless specified otherwise.
 template <typename ContrFunc>
 struct fun_contract
 {
     explicit
     fun_contract(ContrFunc f, bool enter = true, bool exit = true)
-        : contr_{f}
+        : contr_(f)
         , exit_{exit}
     {
         contr_(contract_context{true, false, enter});
     }
 
-    ~fun_contract()
+    ~fun_contract() noexcept(false)
     {
         contr_(contract_context{false, true, exit_});
     }
@@ -103,6 +124,11 @@ struct fun_contract
     bool exit_;
 };
 
+// A base class that performs the check for a class contract.  Parameterized
+// with `ContrFunc` functor defining the actual contract in terms of
+// <precondition>, <postcondition> and <invariant> macros.  Precondition and
+// postcondition are not checked.  Invariant is checked on entry and exit if
+// specified.
 template <typename T>
 struct class_contract_base
 {
@@ -114,7 +140,7 @@ struct class_contract_base
             obj_->class_contract__(contract_context{false, false, true});
     }
 
-    ~class_contract_base()
+    ~class_contract_base() noexcept(false)
     {
         if (exit_)
             obj_->class_contract__(contract_context{false, false, true});
@@ -124,6 +150,8 @@ struct class_contract_base
     bool exit_;
 };
 
+// Performs the check for a method and class contract.  Combines the
+// functionality of <class_contract_base> and <fun_contract> classes.
 template <typename T, typename ContrFunc>
 struct class_contract
     : class_contract_base<T>
@@ -138,6 +166,9 @@ struct class_contract
     {}
 };
 
+// Template metafunction that detects if a class has a class contract defined.
+// Defines `type` as `std::true_type` if the class contract is detected and
+// `std::false_type` otherwise.
 template <typename T>
 struct has_class_contract
 {
@@ -151,9 +182,14 @@ struct has_class_contract
     using type = decltype(test<T>(0));
 };
 
+// Defines a bootstrapper for a contract check implementation.  When combined
+// with a `Func` functor defining the actual contract (by means of overloaded
+// `operator+`) produces a concrete implementation for the contract check.
 template <typename T, bool = has_class_contract<T>::type::value>
 struct contractor;
 
+// Specialization for a function contract or a method contract without a class
+// contract.
 template <typename T>
 struct contractor<T, false>
 {
@@ -167,6 +203,7 @@ struct contractor<T, false>
     }
 };
 
+// Specialization for a method contract with a class contract.
 template <typename T>
 struct contractor<T, true>
 {
@@ -191,20 +228,18 @@ struct contractor<T, true>
 // implementation: violation handler
 //
 
+// Defines a default contract violation handler.  Prints the information about
+// the contract violation to the standard error and abort the program
+// execution.
 inline
-void default_handler(type contr_type,
-                     char const * message,
-                     char const * expr,
-                     char const * func,
-                     char const * file,
-                     std::size_t line)
+void default_handler(violation_context const & context)
 {
-    std::cerr << file << ':' << line << ": error: "
-              << "contract violation of type '";
+    std::cerr << context.file << ':' << context.line
+              << ": error: contract violation of type '";
 
     char const * type_str;
 
-    switch (contr_type)
+    switch (context.contract_type)
     {
     case type::precondition:
         type_str = "precondition";
@@ -218,16 +253,15 @@ void default_handler(type contr_type,
     }
 
     std::cerr << type_str << "'\n"
-              << "message:   " << message << "\n"
-              << "condition: " << expr << "\n"
-              << "function:  " << func << std::endl;
+              << "message:   " << context.message << "\n"
+              << "condition: " << context.condition << std::endl;
 
     std::abort();
 }
 
 // Holder for the currently installed contract failure handler.
 // Templated with a dummy type to be able to keep it in the header file.
-template <typename T = void>
+template <typename = void>
 struct handler_holder
 {
     static
@@ -240,19 +274,9 @@ violation_handler handler_holder<T>::current_handler{default_handler};
 }  // namespace detail
 
 inline
-void handle_violation(type contr_type,
-                      char const * message,
-                      char const * expr,
-                      char const * func,
-                      char const * file,
-                      std::size_t line)
+void handle_violation(violation_context const & context)
 {
-    detail::handler_holder<>::current_handler(contr_type,
-                                              message,
-                                              expr,
-                                              func,
-                                              file,
-                                              line);
+    detail::handler_holder<>::current_handler(context);
 
     // if the handler returns, abort anyway to satisfy the [[noreturn]] contract
     std::abort();
