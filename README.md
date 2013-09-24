@@ -21,7 +21,7 @@ use it immediately without building the library (but if you want to build and
 run tests, see section "Building and running tests").  Here's a small and
 complete example of the library in action.  It defines a function with a
 contract consisting of a precondition and a postcondition.
-
+```cpp
     #include <contract.hpp> // Lib.Contract library header
 
     #include <cstddef>      // for size_t
@@ -48,6 +48,7 @@ contract consisting of a precondition and a postcondition.
         my_strlen("abc");    // all good: contract checks pass
         my_strlen(nullptr);  // error: precondition is violated
     }
+```
 
 The above function, `my_strlen`, has a contract with a precondition that
 requires the input parameter `str` to be non-NULL and a postcondition that
@@ -59,12 +60,14 @@ block, `contract(fun)`, at the beginning of the function.
 ## Library Documentation ##
 
 To use the Lib.Contract library the following header file needs to be included:
-
+```cpp
     #include <contract.hpp>
+```
 
 It provides several macros that facilitate contract programming:
-
+```cpp
     contract(type) { /* contract block */ };
+```
 
 > Defines a contract block of a specific `type`, where `type` can be one of the
 > following:
@@ -78,17 +81,20 @@ It provides several macros that facilitate contract programming:
 
 The contract block is just a regular block of code that should contain contract
 checks.  The following contract checks are available: precondition,
-postcondition and invariant.  All contract checks are defined in a similar way:
-
+postcondition and invariant. All contract checks are defined in a similar way:
+```cpp
     precondition(cond [, message]);
+```
 
 > Defines a precondition.
-
+```cpp
     postcondition(cond [, message]);
+```
 
 > Defines a postcondition.
-
+```cpp
     invariant(cond [, message]);
+```
 
 > Defines an invariant.
 
@@ -105,13 +111,14 @@ information.
 
 A function contract block should be defined inside a free function using the
 following syntax:
-
+```cpp
     contract(fun)
     {
         precondition(<precond-expr> [, <message>]);
         invariant(<inv-expr> [, <message>]);
         postcondition(<post-expr> [, <message>]);
     };
+```
 
 The `invariant` contract check is usually not needed in the function contract
 block unless a function needs to maintain some global invariant.
@@ -130,13 +137,14 @@ A method contract block should be defined inside of a method of a class.  It is
 similar to a function contract block, but it also provides an additional
 capability of enforcing class contracts.  The syntax for the method contract
 block is the following:
-
+```cpp
     contract(this)
     {
         precondition(<precond-expr> [, <message>]);
         invariant(<inv-expr> [, <message>]);
         postcondition(<post-expr> [, <message>]);
     };
+```
 
 See the class invariant contract block description for details on how the
 method contract blocks can enforce class invariants.
@@ -154,13 +162,14 @@ rules:
 A constructor contract block should be defined inside of a constructor of a
 class.  It is similar to a method contract block with some exceptions.  The
 syntaxt for the constructor contract block is the following:
-
+```cpp
     contract(ctor)
     {
         precondition(<precond-expr> [, <message>]);
         invariant(<inv-expr> [, <message>]);
         postcondition(<post-expr> [, <message>]);
     };
+```
 
 The `invariant` contract check is usually not needed in the constructor
 contract block unless the constructor needs to maintain some global invariant.
@@ -178,13 +187,14 @@ following rules:
 A destructor contract block should be defined inside of a destructor of a
 class.  It is similar to a method contract block with some exceptions.  The
 syntaxt for the destructor contract block is the following:
-
+```cpp
     contract(dtor)
     {
         precondition(<precond-expr> [, <message>]);
         invariant(<inv-expr> [, <message>]);
         postcondition(<post-expr> [, <message>]);
     };
+```
 
 The `invariant` contract check is usually not needed in the destructor contract
 block unless the destructor needs to maintain some global invariant.
@@ -203,7 +213,7 @@ following rules:
 A class contract block should be defined inside a class.  It defines the
 invariant contract for the class.  The syntax for the class contract block is
 the following:
-
+```cpp
     class MyClass
     {
         // ...
@@ -216,6 +226,7 @@ the following:
 
         // ...
     };
+```
 
 A class contract block can also contain precondition and postcondition checks,
 but those are not enforces (ignored).
@@ -239,11 +250,12 @@ The class invariant contract is enforced according to the following rules:
 A loop invariant contract block is a special contract block for enforcing loop
 invariants.  It should be defined inside a loop.  The syntax for the loop
 invariant contract block is the following:
-
+```cpp
     contract(loop)
     {
         invariant(<inv-expr> [, <message>]);
     };
+```
 
 Precondition and postcondition contract checks inside a loop invariant contract
 block are not enforced (ignored).  The invariant contract check is checked on
@@ -253,15 +265,16 @@ every iteration of the loop.
 
 When a contract is violated by not satisfying any of its contract conditions,
 the following function is called to handle the contract violation:
-
+```cpp
     namespace contract
     {
         [[noreturn]]
         void handle_violation(violation_context const & context);
     }
+```
 
 Where `contract::violation_context` struct is defined as follows:
-
+```cpp
     namespace contract
     {
         enum class type
@@ -280,6 +293,7 @@ Where `contract::violation_context` struct is defined as follows:
             std::size_t line;             // line on which the contact check occurs
         };
     }
+```
 
 By default `handle_violation` prints a message to `std::cerr` with the
 information about the contract violation and then aborts the execution by
@@ -288,7 +302,7 @@ calling `std::abort`.
 The behavior of `handle_violation` can be customized by providing a different
 violation handler function via `set_handler` and `get_handler` library
 functions:
-
+```cpp
     namespace contract
     {
         using violation_handler = std::function<void (violation_context const &)>;
@@ -296,6 +310,7 @@ functions:
         violation_handler set_handler(violation_handler new_handler);
         violation_handler get_handler();
     }
+```
 
 The custom handler is supposed to be `[[noreturn]]` like the default handler.
 If the custom handler returns, `std::abort` is called anyway.  However the
@@ -330,7 +345,7 @@ Python 2.6 or later.
 * Python 2.6 or later.
 * G++ 4.8 or later or Clang 3.3 or later.  If compiled with Clang, libc++
   library may also be required.
-* Boost version 1.50 of later is required to compile and run tests.
+* Boost version 1.50 or later is required to compile and run tests.
 
 ## Limitations ##
 
