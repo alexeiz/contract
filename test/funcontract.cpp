@@ -34,6 +34,12 @@ void fun_contract_test_postcondition(bool par, char const * msg)
     contract(fun) { postcondition(par, msg); };
 }
 
+void fun_contract_test_postcondition_exception()
+{
+    contract(fun) { postcondition(false); };
+    throw test::non_contract_error{};
+}
+
 void fun_contract_test_all(bool pre, bool inv, bool post)
 {
     contract(fun)
@@ -48,6 +54,11 @@ BOOST_AUTO_TEST_CASE(fun_contract_precondition)
 {
     test::contract_handler_frame cframe;
 
+    // expect precondition to pass
+    BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true, "message"));
+
+    // expect precondition to fail
     test::check_throw_on_contract_violation(
         []{ fun_contract_test_precondition(false); },
         contract::type::precondition);
@@ -60,15 +71,17 @@ BOOST_AUTO_TEST_CASE(fun_contract_precondition)
     test::check_throw_on_contract_violation(
         []{ fun_contract_test_all(false, true, true); },
         contract::type::precondition);
-
-    BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true));
-    BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true, "message"));
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_invariant)
 {
     test::contract_handler_frame cframe;
 
+    // expect invariant to pass
+    BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true, "message"));
+
+    // expect invariant to fail
     test::check_throw_on_contract_violation(
         []{ fun_contract_test_invariant(false); },
         contract::type::invariant);
@@ -81,15 +94,17 @@ BOOST_AUTO_TEST_CASE(fun_contract_invariant)
     test::check_throw_on_contract_violation(
         []{ fun_contract_test_all(true, false, true); },
         contract::type::invariant);
-
-    BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true));
-    BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true, "message"));
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
 {
     test::contract_handler_frame cframe;
 
+    // expect postcondition to pass
+    BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true));
+    BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true, "message"));
+
+    // expect postcondition to fail
     test::check_throw_on_contract_violation(
         []{ fun_contract_test_postcondition(false); },
         contract::type::postcondition);
@@ -103,12 +118,14 @@ BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
         []{ fun_contract_test_all(true, true, false); },
         contract::type::postcondition);
 
-    BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true));
-    BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true, "message"));
+    // skip postcondition if function throws
+    BOOST_CHECK_THROW(fun_contract_test_postcondition_exception(),
+                      test::non_contract_error);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_all)
 {
+    // expect contract to pass
     BOOST_CHECK_NO_THROW(fun_contract_test_all(true, true, true));
 }
 

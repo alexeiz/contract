@@ -43,9 +43,13 @@ BOOST_AUTO_TEST_CASE(loop_invariant)
 {
     test::contract_handler_frame cframe;
 
+    // expect loop invariant to pass
     BOOST_CHECK_NO_THROW(loop_invariant_success());
+
+    // expect loop invariant to fail
     BOOST_CHECK_THROW(loop_invariant_failure(), test::contract_error);
 
+    // skip precondition and postcondition inside loop contract
     BOOST_CHECK_NO_THROW(ignore_pre_postcondition());
 }
 
