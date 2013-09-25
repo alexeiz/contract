@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <iostream>
+#include <exception>
 #include <cstdlib>
 
 // implementation: macros
@@ -56,7 +57,7 @@
 // Contract check main implementation.
 #define contract_check__(TYPE, COND, MSG)                           \
     do {                                                            \
-        if (contract_context__.check_ ## TYPE && !(COND))           \
+        if (contract_context__.check_ ## TYPE () && !(COND))        \
             contract::handle_violation(                             \
                 contract::violation_context(contract::type:: TYPE,  \
                                             MSG,                    \
@@ -86,17 +87,21 @@ namespace detail
 struct contract_context
 {
     contract_context(bool pre, bool post, bool inv)
-        : check_precondition{pre}
-        , check_postcondition{post}
-        , check_invariant{inv}
+        : check_pre{pre}
+        , check_post{post}
+        , check_inv{inv}
     {}
 
     explicit
     operator bool() { return true; }
 
-    bool check_precondition;
-    bool check_postcondition;
-    bool check_invariant;
+    bool check_precondition()  const { return check_pre; }
+    bool check_postcondition() const { return check_post && !std::uncaught_exception(); }
+    bool check_invariant()     const { return check_inv; }
+
+    bool check_pre;
+    bool check_post;
+    bool check_inv;
 };
 
 // Performs the check for a function or method contract.  Parameterized with
@@ -142,7 +147,7 @@ struct class_contract_base
 
     ~class_contract_base() noexcept(false)
     {
-        if (exit_)
+        if (exit_ && !std::uncaught_exception())
             obj_->class_contract__(contract_context{false, false, true});
     }
 

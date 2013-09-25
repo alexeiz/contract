@@ -7,6 +7,8 @@
 namespace
 {
 
+class throwing_ctor_t {};
+
 class account
 {
 public:
@@ -15,6 +17,13 @@ public:
     {
         contract(ctor) {};
         balance_ = bal;  // the class contract is checked on constructor exit
+    }
+
+    account(throwing_ctor_t)
+        : balance_(-1)
+    {
+        contract(ctor) {};
+        throw test::non_contract_error{};
     }
 
     ~account() noexcept(false)  // only needed so the contract check can throw
@@ -56,8 +65,14 @@ BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
 {
     test::contract_handler_frame cframe;
 
+    // expect class invariant to pass
     BOOST_CHECK_NO_THROW(account(10));
+
+    // expect class invariant to fail
     BOOST_CHECK_THROW(account(-2), test::contract_error);
+
+    // skip class invariant check if constructor throws
+    BOOST_CHECK_THROW(account(throwing_ctor_t{}), test::non_contract_error);
 }
 
 BOOST_AUTO_TEST_CASE(class_contract_in_method)

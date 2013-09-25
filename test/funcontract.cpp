@@ -34,6 +34,12 @@ void fun_contract_test_postcondition(bool par, char const * msg)
     contract(fun) { postcondition(par, msg); };
 }
 
+void fun_contract_test_postcondition_exception()
+{
+    contract(fun) { postcondition(false); };
+    throw test::non_contract_error{};
+}
+
 void fun_contract_test_all(bool pre, bool inv, bool post)
 {
     contract(fun)
@@ -105,6 +111,9 @@ BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
 
     BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true));
     BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true, "message"));
+
+    BOOST_CHECK_THROW(fun_contract_test_postcondition_exception(),
+                      test::non_contract_error);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_all)
