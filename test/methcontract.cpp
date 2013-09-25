@@ -38,18 +38,18 @@ BOOST_AUTO_TEST_CASE(method_contract)
 {
     test::contract_handler_frame cframe;
 
-    // satisfy contract
+    // expect contract to pass
     BOOST_CHECK_NO_THROW(account(10).balance(20));
 
-    // violate precondition
+    // expect precondition to fail
     test::check_throw_on_contract_violation([]{ account(10).balance(-1); },
                                             contract::type::precondition);
 
-    // violate postcondition
+    // expect postcondition to fail
     test::check_throw_on_contract_violation([]{ account(10).balance(5); },
                                             contract::type::postcondition);
 
-    // violate invariant
+    // expect invariant to fail
     test::check_throw_on_contract_violation([]{ account(-10).balance(5); },
                                             contract::type::invariant);
     test::check_throw_on_contract_violation([]{ account(0).balance(0); },

@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
     // expect class invariant to fail
     BOOST_CHECK_THROW(account(-2), test::contract_error);
 
-    // skip class invariant check if constructor throws
+    // skip class invariant if constructor throws
     BOOST_CHECK_THROW(account(throwing_ctor_t{}), test::non_contract_error);
 }
 
@@ -83,6 +83,7 @@ BOOST_AUTO_TEST_CASE(class_contract_in_method)
 
     try
     {
+        // expect class invariant to pass
         account acc(10);
         BOOST_CHECK_NO_THROW(acc.balance());
         BOOST_CHECK_NO_THROW(acc.balance(20));

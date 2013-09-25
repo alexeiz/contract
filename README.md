@@ -330,7 +330,7 @@ Python 2.6 or later.
 * Python 2.6 or later.
 * G++ 4.8 or later or Clang 3.3 or later.  If compiled with Clang, libc++
   library may also be required.
-* Boost version 1.50 of later is required to compile and run tests.
+* Boost version 1.50 or later is required to compile and run tests.
 
 ## Limitations ##
 
