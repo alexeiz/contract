@@ -9,7 +9,16 @@ namespace
 
 class throwing_ctor_t {};
 
-class account
+class base_account
+{
+private:
+    contract(class)
+    {
+        invariant(true);
+    };
+};
+
+class account : public base_account
 {
 public:
     account(int bal)
@@ -53,7 +62,7 @@ public:
     }
 
 private:
-    contract(class) { invariant(balance_ > 0, "invariant"); };
+    contract(derived)(base_account) { invariant(balance_ > 0, "invariant"); };
 
 private:
     int balance_;

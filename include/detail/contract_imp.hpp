@@ -41,13 +41,44 @@
 // Define a class contract.
 #define contract_class__                                                     \
     template <typename T>                                                    \
-        friend struct contract::detail::class_contract_base;                 \
+    friend struct contract::detail::class_contract_base;                     \
                                                                              \
     template <typename T>                                                    \
     friend struct contract::detail::has_class_contract;                      \
                                                                              \
+    template <typename ...Bases>                                             \
+    friend struct contract::detail::base_contract_enforcer;                  \
+                                                                             \
+    contract::detail::contract_context contract_prereq__(                    \
+        contract::detail::contract_context const & contract_context__) const \
+    {                                                                        \
+        return contract_context__;                                           \
+    }                                                                        \
+                                                                             \
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
+
+#define contract_derived__(...)                                              \
+    template <typename T>                                                    \
+    friend struct contract::detail::class_contract_base;                     \
+                                                                             \
+    template <typename T>                                                    \
+    friend struct contract::detail::has_class_contract;                      \
+                                                                             \
+    template <typename ...Bases>                                             \
+    friend struct contract::detail::base_contract_enforcer;                  \
+                                                                             \
+    contract::detail::contract_context contract_prereq__(                    \
+        contract::detail::contract_context const & contract_context__) const \
+    {                                                                        \
+        contract::detail::base_contract_enforcer<__VA_ARGS__>                \
+            ::enforce(this, contract_context__);                             \
+        return contract_context__;                                           \
+    }                                                                        \
+                                                                             \
+    void class_contract__(                                                   \
+        contract::detail::contract_context const & contract_context__) const \
+
 
 // Define a loop invariant contract.
 #define contract_loop__                                                      \
@@ -104,6 +135,26 @@ struct contract_context
     bool check_inv;
 };
 
+template <typename ...Bases>
+struct base_contract_enforcer
+{
+    template <typename T>
+    static
+    void enforce(T * obj, contract_context const & context) {}
+};
+
+template <typename Base, typename ...Bases>
+struct base_contract_enforcer<Base, Bases...>
+{
+    template <typename T>
+    static
+    void enforce(T * obj, contract_context const & context)
+    {
+        obj->Base::class_contract__(context);
+        base_contract_enforcer<Bases...>::enforce(obj, context);
+    }
+};
+
 // Performs the check for a function or method contract.  Parameterized with
 // `ContrFunc` functor defining the actual contract in terms of <precondition>,
 // <postcondition> and <invariant> macros.  Precondition is checked on function
@@ -142,13 +193,15 @@ struct class_contract_base
         , exit_{exit}
     {
         if (enter)
-            obj_->class_contract__(contract_context{false, false, true});
+            obj_->class_contract__(
+                obj_->contract_prereq__(contract_context{false, false, true}));
     }
 
     ~class_contract_base() noexcept(false)
     {
         if (exit_ && !std::uncaught_exception())
-            obj_->class_contract__(contract_context{false, false, true});
+            obj_->class_contract__(
+                obj_->contract_prereq__(contract_context{false, false, true}));
     }
 
     T const * obj_;
