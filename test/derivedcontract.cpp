@@ -9,7 +9,16 @@ namespace
 
 class throwing_ctor_t {};
 
-class account
+class base_account
+{
+private:
+    contract(class)
+    {
+        invariant(true);
+    };
+};
+
+class account : public base_account
 {
 public:
     account(int bal)
@@ -53,7 +62,7 @@ public:
     }
 
 private:
-    contract(class) { invariant(balance_ > 0, "invariant"); };
+    contract(derived)(base_account) { invariant(balance_ > 0, "invariant"); };
 
 private:
     int balance_;
@@ -61,7 +70,7 @@ private:
 
 }
 
-BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
+BOOST_AUTO_TEST_CASE(derived_contract_in_ctor_dtor)
 {
     test::contract_handler_frame cframe;
 
@@ -75,7 +84,7 @@ BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
     BOOST_CHECK_THROW(account(throwing_ctor_t{}), test::non_contract_error);
 }
 
-BOOST_AUTO_TEST_CASE(class_contract_in_method)
+BOOST_AUTO_TEST_CASE(derived_contract_in_method)
 {
     test::contract_handler_frame cframe;
 
