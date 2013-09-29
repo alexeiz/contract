@@ -362,8 +362,6 @@ Python 2.6 or later.
 * The contract of a virtual function of a base class overriden in a derived
   class is not checked.  The derived function has to duplicate the contract of
   the base class function.
-* The class invariant contract of a base class is not enforced in a derived
-  class (although this can probably be made to work).
 
 ## Alternative libraries and references ##
 
