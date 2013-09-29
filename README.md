@@ -1,4 +1,4 @@
-g# Lib.Contract #
+# Lib.Contract #
 
 Library to support contract programming in C++11.
 
