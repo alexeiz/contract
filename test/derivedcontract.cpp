@@ -94,6 +94,61 @@ private:
     int balance_;
 };
 
+
+class base_no_invariant {};
+class base_no_invariant2 {};
+
+// Derived class contract with a base class that doesn't have a class invariant
+// contract.
+class derived_with_invariant : public base_no_invariant
+{
+public:
+    derived_with_invariant()
+    {
+        contract(ctor) {};
+    }
+
+private:
+    contract(derived)(base_no_invariant)
+    {
+        invariant(true);
+    };
+};
+
+
+class base_with_invariant
+{
+private:
+    contract(class)
+    {
+        invariant(true);
+    };
+};
+
+// Derived class with more than one base class.
+class derived_with_many_bases : public derived_with_invariant
+                              , public base_with_invariant
+                              , public base_no_invariant2
+{
+private:
+    contract(derived)(derived_with_invariant,
+                      base_with_invariant,
+                      base_no_invariant2)
+    {
+        invariant(true);
+    };
+};
+
+}
+
+BOOST_AUTO_TEST_CASE(derived_contract_with_many_bases)
+{
+    BOOST_CHECK_NO_THROW(derived_with_many_bases());
+}
+
+BOOST_AUTO_TEST_CASE(derived_contract_base_without_contract)
+{
+    BOOST_CHECK_NO_THROW(derived_with_invariant());
 }
 
 BOOST_AUTO_TEST_CASE(derived_contract_in_ctor_dtor)

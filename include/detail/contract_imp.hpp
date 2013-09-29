@@ -237,11 +237,25 @@ struct base_class_contract
 template <typename Base, typename ...Bases>
 struct base_class_contract<Base, Bases...>
 {
+    template <typename T>
+    static
+    void do_enforce(T * obj, contract_context const & context,
+                    typename std::enable_if<has_class_contract<T>::type::value>::type * = 0)
+    {
+        obj->class_contract__(context);
+    }
+
+    template <typename T>
+    static
+    void do_enforce(T * obj, contract_context const & context,
+                    typename std::enable_if<! has_class_contract<T>::type::value>::type * = 0)
+    {}
+
     template <typename Derived>
     static
     void enforce(Derived * obj, contract_context const & context)
     {
-        obj->Base::class_contract__(context);
+        do_enforce(static_cast<typename std::add_const<Base>::type *>(obj), context);
         base_class_contract<Bases...>::enforce(obj, context);
     }
 };
