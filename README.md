@@ -1,4 +1,4 @@
-# Lib.Contract #
+g# Lib.Contract #
 
 Library to support contract programming in C++11.
 
@@ -72,6 +72,7 @@ It provides several macros that facilitate contract programming:
 > * `fun` for function contract,
 > * `this` for method contract,
 > * `class` for class contract,
+> * `derived` for derived class contract,
 > * `ctor` for constructor contract,
 > * `dtor` for destructor contract,
 > * `loop` for loop invariant.
