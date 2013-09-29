@@ -14,19 +14,19 @@
 // This macro defines a contract block for a specified `scope`.
 //
 // @scope  the scope of the contract:
-//             `class` - defines a contract for a class,
-//             `this`  - defines a contract for a method,
-//             `ctor`  - defines a contract for a constructor,
-//             `dtor`  - defines a contract for a destructor,
-//             `fun`   - defines a free function contract,
-//             `loop`  - defines a loop invariant contract.
+//             `class`   - defines a contract for a class,
+//             `derived` - defines a contract for a derived class,
+//             `this`    - defines a contract for a method,
+//             `ctor`    - defines a contract for a constructor,
+//             `dtor`    - defines a contract for a destructor,
+//             `fun`     - defines a free function contract,
+//             `loop`    - defines a loop invariant contract.
 #define contract(scope)           contract_ ## scope ## __
 
 // Define precondition contract.
 //
 // This macro defines a precondition check for a contract block defined by the
 // `contract(...)` macro.  Precondition is checked in the following situations:
-//   `class` - on entry to each method with a `contract(this) or contract(dtor)` block,
 //   `this`  - on method entry,
 //   `ctor`  - on constructor entry,
 //   `dtor`  - on destructor entry,
@@ -45,7 +45,6 @@
 //
 // This macro defines a postcondition check for a contract block defined by the
 // `contract(...)` macro.  Precondition is checked in the following situations:
-//   `class` - on exit of each method with a `contract(this) or contract(ctor)` block,
 //   `this`  - on method exit,
 //   `ctor`  - on constructor exit,
 //   `dtor`  - on destructor exit,
@@ -64,14 +63,19 @@
 //
 // This macro defines an invariant check for a contract block defined by the
 // `contract(...)` macro.  Invariant is checked in the following situations:
-//   `class` - on entry and exit of each method with a `contract(this) block,
-//             on exit of constructors with a `contract(ctor)` block,
-//             on entry to destructors with a `contract(dtor)` block,
-//   `this`  - on method entry and exit,
-//   `ctor`  - on constructor exit,
-//   `dtor`  - on destructor entry,
-//   `fun`   - on function entry and exit,
-//   `loop`  - on each loop iteration.
+//   `class`   - on entry and exit of each method with a `contract(this) block,
+//               on exit of constructors with a `contract(ctor)` block, unless
+//                  an exception is thrown,
+//               on entry to destructors with a `contract(dtor)` block,
+//   `derived` - on entry and exit of each method with a `contract(this) block,
+//               on exit of constructors with a `contract(ctor)` block unless
+//                  an exception is thrown,
+//               on entry to destructors with a `contract(dtor)` block,
+//   `this`    - on method entry and exit,
+//   `ctor`    - on constructor exit,
+//   `dtor`    - on destructor entry,
+//   `fun`     - on function entry and exit,
+//   `loop`    - on each loop iteration.
 //
 // @cond  postcondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`

@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <iostream>
+#include <exception>
 #include <cstdlib>
 
 // implementation: macros
@@ -40,13 +41,45 @@
 // Define a class contract.
 #define contract_class__                                                     \
     template <typename T>                                                    \
-        friend struct contract::detail::class_contract_base;                 \
+    friend struct contract::detail::class_contract_base;                     \
                                                                              \
     template <typename T>                                                    \
     friend struct contract::detail::has_class_contract;                      \
                                                                              \
+    template <typename ...Bases>                                             \
+    friend struct contract::detail::base_class_contract;                     \
+                                                                             \
+    contract::detail::contract_context prepare_contract__(                   \
+        contract::detail::contract_context const & contract_context__) const \
+    {                                                                        \
+        return contract_context__;                                           \
+    }                                                                        \
+                                                                             \
     void class_contract__(                                                   \
         contract::detail::contract_context const & contract_context__) const \
+
+// Define a derived class contract.
+#define contract_derived__(...)                                              \
+    template <typename T>                                                    \
+    friend struct contract::detail::class_contract_base;                     \
+                                                                             \
+    template <typename T>                                                    \
+    friend struct contract::detail::has_class_contract;                      \
+                                                                             \
+    template <typename ...Bases>                                             \
+    friend struct contract::detail::base_class_contract;                     \
+                                                                             \
+    contract::detail::contract_context prepare_contract__(                   \
+        contract::detail::contract_context const & contract_context__) const \
+    {                                                                        \
+        contract::detail::base_class_contract<__VA_ARGS__>                   \
+            ::enforce(this, contract_context__);                             \
+        return contract_context__;                                           \
+    }                                                                        \
+                                                                             \
+    void class_contract__(                                                   \
+        contract::detail::contract_context const & contract_context__) const \
+
 
 // Define a loop invariant contract.
 #define contract_loop__                                                      \
@@ -54,16 +87,16 @@
         contract_context__{false, false, true})                              \
 
 // Contract check main implementation.
-#define contract_check__(TYPE, COND, MSG)                           \
-    do {                                                            \
-        if (contract_context__.check_ ## TYPE && !(COND))           \
-            contract::handle_violation(                             \
-                contract::violation_context(contract::type:: TYPE,  \
-                                            MSG,                    \
-                                            #COND,                  \
-                                            __FILE__,               \
-                                            __LINE__));             \
-    } while (0)                                                     \
+#define contract_check__(TYPE, COND, MSG)                                    \
+    do {                                                                     \
+        if (contract_context__.check_ ## TYPE () && !(COND))                 \
+            contract::handle_violation(                                      \
+                contract::violation_context(contract::type:: TYPE,           \
+                                            MSG,                             \
+                                            #COND,                           \
+                                            __FILE__,                        \
+                                            __LINE__));                      \
+    } while (0)                                                              \
 
 // macros for variadic argument dispatch
 
@@ -86,17 +119,21 @@ namespace detail
 struct contract_context
 {
     contract_context(bool pre, bool post, bool inv)
-        : check_precondition{pre}
-        , check_postcondition{post}
-        , check_invariant{inv}
+        : check_pre{pre}
+        , check_post{post}
+        , check_inv{inv}
     {}
 
     explicit
     operator bool() { return true; }
 
-    bool check_precondition;
-    bool check_postcondition;
-    bool check_invariant;
+    bool check_precondition()  const { return check_pre; }
+    bool check_postcondition() const { return check_post && !std::uncaught_exception(); }
+    bool check_invariant()     const { return check_inv; }
+
+    bool check_pre;
+    bool check_post;
+    bool check_inv;
 };
 
 // Performs the check for a function or method contract.  Parameterized with
@@ -137,13 +174,15 @@ struct class_contract_base
         , exit_{exit}
     {
         if (enter)
-            obj_->class_contract__(contract_context{false, false, true});
+            obj_->class_contract__(
+                obj_->prepare_contract__(contract_context{false, false, true}));
     }
 
     ~class_contract_base() noexcept(false)
     {
-        if (exit_)
-            obj_->class_contract__(contract_context{false, false, true});
+        if (exit_ && !std::uncaught_exception())
+            obj_->class_contract__(
+                obj_->prepare_contract__(contract_context{false, false, true}));
     }
 
     T const * obj_;
@@ -180,6 +219,45 @@ struct has_class_contract
     static auto test(...) -> std::false_type;
 
     using type = decltype(test<T>(0));
+};
+
+// Enforces base class contracts for a derived class.
+//
+// `Bases`   - the list of base class types with class contracts that should be
+//             enforced as part of the derived class contract.
+// `Derived` - the class derived from each of the `Bases`.
+template <typename ...Bases>
+struct base_class_contract
+{
+    template <typename Derived>
+    static
+    void enforce(Derived * obj, contract_context const & context) {}
+};
+
+template <typename Base, typename ...Bases>
+struct base_class_contract<Base, Bases...>
+{
+    template <typename T>
+    static
+    void do_enforce(T * obj, contract_context const & context,
+                    typename std::enable_if<has_class_contract<T>::type::value>::type * = 0)
+    {
+        obj->class_contract__(context);
+    }
+
+    template <typename T>
+    static
+    void do_enforce(T * obj, contract_context const & context,
+                    typename std::enable_if<! has_class_contract<T>::type::value>::type * = 0)
+    {}
+
+    template <typename Derived>
+    static
+    void enforce(Derived * obj, contract_context const & context)
+    {
+        do_enforce(static_cast<typename std::add_const<Base>::type *>(obj), context);
+        base_class_contract<Bases...>::enforce(obj, context);
+    }
 };
 
 // Defines a bootstrapper for a contract check implementation.  When combined

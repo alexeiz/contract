@@ -13,6 +13,8 @@
 namespace test
 {
 
+struct non_contract_error {};
+
 struct contract_error : std::exception
 {
     contract_error(contract::violation_context const & context)
