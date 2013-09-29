@@ -56,7 +56,7 @@ function entry and the postcondition is checked on function exit.  Notice,
 however, that both precondition and postcondition are defined in the same
 block, `contract(fun)`, at the beginning of the function.
 
-## Library Documentation ##
+## Library documentation ##
 
 To use the Lib.Contract library the following header file needs to be included:
 
