@@ -11,25 +11,44 @@ class throwing_ctor_t {};
 
 class base_account
 {
+public:
+    base_account(double rate)
+        : interest_rate_(rate)
+    {
+        contract(ctor) {};
+    }
+
+    ~base_account()
+    {
+        interest_rate_ = -1;
+    }
+
 private:
     contract(class)
     {
-        invariant(true);
+        invariant(interest_rate_ >= 0);
     };
+
+protected:
+    // derived class can change the state
+    // and base class contract should catch violation
+    double interest_rate_;
 };
 
 class account : public base_account
 {
 public:
-    account(int bal)
-        : balance_(-1)
+    account(int bal, double rate)
+        : base_account(rate)
+        , balance_(-1)
     {
         contract(ctor) {};
         balance_ = bal;  // the class contract is checked on constructor exit
     }
 
     account(throwing_ctor_t)
-        : balance_(-1)
+        : base_account(1)
+        , balance_(-1)
     {
         contract(ctor) {};
         throw test::non_contract_error{};
@@ -49,16 +68,23 @@ public:
         return balance_;
     }
 
-    void balance(int bal, bool bypass_contract = false)
+    void balance(int bal)
     {
-        if (bypass_contract)
-            balance_ = bal;
-        else
-        {
-            contract(this) {};
-            balance_ = bal;  // the class contract is checked both on method
-                             // entry and exit
-        }
+        contract(this) {};
+        balance_ = bal;  // the class contract is checked both on method
+                         // entry and exit
+    }
+
+    double interest_rate() const
+    {
+        contract(this) {};
+        return interest_rate_;
+    }
+
+    void interest_rate(double rate)
+    {
+        contract(this) {};
+        interest_rate_ = rate;
     }
 
 private:
@@ -75,10 +101,11 @@ BOOST_AUTO_TEST_CASE(derived_contract_in_ctor_dtor)
     test::contract_handler_frame cframe;
 
     // expect class invariant to pass
-    BOOST_CHECK_NO_THROW(account(10));
+    BOOST_CHECK_NO_THROW(account(10, 0.05));
 
     // expect class invariant to fail
-    BOOST_CHECK_THROW(account(-2), test::contract_error);
+    BOOST_CHECK_THROW(account(-2, 0.05), test::contract_error);
+    BOOST_CHECK_THROW(account(10, -0.05), test::contract_error);
 
     // skip class invariant if constructor throws
     BOOST_CHECK_THROW(account(throwing_ctor_t{}), test::non_contract_error);
@@ -93,19 +120,18 @@ BOOST_AUTO_TEST_CASE(derived_contract_in_method)
     try
     {
         // expect class invariant to pass
-        account acc(10);
-        BOOST_CHECK_NO_THROW(acc.balance());
-        BOOST_CHECK_NO_THROW(acc.balance(20));
+        account acc{10, 0.05};
+        BOOST_CHECK_NO_THROW(acc.interest_rate(0.1));
 
         // once the invariant is violated, all methods start to throw
         // the contract error
-        BOOST_CHECK_THROW(acc.balance(-2), test::contract_error);
-        BOOST_CHECK_THROW(acc.balance(), test::contract_error);
+        BOOST_CHECK_THROW(acc.interest_rate(-0.1), test::contract_error);
+        BOOST_CHECK_THROW(acc.interest_rate(), test::contract_error);
 
         // verify that the contract is checked on both entry/exit of a method,
         // and the class invariant can't be restored once it's broken
-        BOOST_CHECK_THROW(acc.balance(15), test::contract_error);
-        BOOST_CHECK_THROW(acc.balance(), test::contract_error);
+        BOOST_CHECK_THROW(acc.interest_rate(0.07), test::contract_error);
+        BOOST_CHECK_THROW(acc.interest_rate(), test::contract_error);
 
         // verify that the destructor also throws on contract violation
     }

@@ -40,16 +40,11 @@ public:
         return balance_;
     }
 
-    void balance(int bal, bool bypass_contract = false)
+    void balance(int bal)
     {
-        if (bypass_contract)
-            balance_ = bal;
-        else
-        {
-            contract(this) {};
-            balance_ = bal;  // the class contract is checked both on method
-                             // entry and exit
-        }
+        contract(this) {};
+        balance_ = bal;  // the class contract is checked both on method
+                         // entry and exit
     }
 
 private:
