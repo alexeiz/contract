@@ -56,7 +56,7 @@ function entry and the postcondition is checked on function exit.  Notice,
 however, that both precondition and postcondition are defined in the same
 block, `contract(fun)`, at the beginning of the function.
 
-## Library Documentation ##
+## Library documentation ##
 
 To use the Lib.Contract library the following header file needs to be included:
 
@@ -72,13 +72,14 @@ It provides several macros that facilitate contract programming:
 > * `fun` for function contract,
 > * `this` for method contract,
 > * `class` for class contract,
+> * `derived` for derived class contract,
 > * `ctor` for constructor contract,
 > * `dtor` for destructor contract,
 > * `loop` for loop invariant.
 
 The contract block is just a regular block of code that should contain contract
 checks.  The following contract checks are available: precondition,
-postcondition and invariant.  All contract checks are defined in a similar way:
+postcondition and invariant. All contract checks are defined in a similar way:
 
     precondition(cond [, message]);
 
@@ -234,6 +235,30 @@ The class invariant contract is enforced according to the following rules:
   block, `contract(dtor)`, but is not checked on exit of the destructor (the
   class invariant doesn't need to hold for a destructed object).
 
+### Derived class invariant contract ###
+
+A derived class contract block is intended to be defined in a class derived
+from one or more base classes with a class invariant contract.  It defines the
+invariant for the derived class and also enforces invariants of the base
+classes.  The syntax for the derived class contract block is the following:
+
+    class MyClass : public Base1 [, public Base2, ..., public BaseN]
+    {
+        // ...
+
+    private:
+        contract(derived)(Base1 [, Base2, ..., BaseN])
+        {
+            invariant(<inv-expr> [, <message>]);
+        };
+
+        // ...
+    };
+
+The behavior of the derived class contract block is identical to the class
+contract block with the exception that all base class invariants are also
+enforced.
+
 ### Loop invariant contract ###
 
 A loop invariant contract block is a special contract block for enforcing loop
@@ -338,8 +363,6 @@ Python 2.6 or later.
 * The contract of a virtual function of a base class overriden in a derived
   class is not checked.  The derived function has to duplicate the contract of
   the base class function.
-* The class invariant contract of a base class is not enforced in a derived
-  class (although this can probably be made to work).
 
 ## Alternative libraries and references ##
 
