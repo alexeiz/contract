@@ -1,5 +1,5 @@
 #define CONTRACT_DISABLE_POSTCONDITIONS
-#include <contract.hpp>
+#include <contract/contract.hpp>
 
 #include "contract_error.hpp"
 

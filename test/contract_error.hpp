@@ -1,7 +1,7 @@
 #ifndef included_contract_error_hpp__
 #define included_contract_error_hpp__
 
-#include <contract.hpp>
+#include <contract/contract.hpp>
 
 #include <boost/test/unit_test.hpp>
 
