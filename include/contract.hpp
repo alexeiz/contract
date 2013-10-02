@@ -36,10 +36,17 @@
 // @cond  precondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
 //        evaluates to `false`.
+//
+// Use macro `CONTRACT_DISABLE_PRECONDITIONS` to disable precondition checking.
 #define precondition(...)         concat__(precondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define precondition1(cond)       precondition2(cond, #cond)
-#define precondition2(cond, msg)  contract_check__(precondition, cond, msg)
+
+#if !defined(CONTRACT_DISABLE_PRECONDITIONS)
+#   define precondition2(cond, msg) contract_check__(precondition, cond, msg)
+#else
+#   define precondition2(cond, msg) do {} while (false && (cond))
+#endif
 
 // Define postcondition contract.
 //
@@ -54,10 +61,17 @@
 // @cond  postcondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
 //        evaluates to `false`.
+//
+// Use macro `CONTRACT_DISABLE_POSTCONDITIONS` to disable precondition checking.
 #define postcondition(...)        concat__(postcondition, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define postcondition1(cond)      postcondition2(cond, #cond)
-#define postcondition2(cond, msg) contract_check__(postcondition, cond, msg)
+
+#if !defined(CONTRACT_DISABLE_POSTCONDITIONS)
+#   define postcondition2(cond, msg) contract_check__(postcondition, cond, msg)
+#else
+#   define postcondition2(cond, msg) do {} while (false && (cond))
+#endif
 
 // Define invariant contract.
 //
@@ -80,10 +94,17 @@
 // @cond  postcondition expression that should evalate to `true`.
 // @msg   message which is reported to the contract violation handler if `cond`
 //        evaluates to `false`.
+//
+// Use macro `CONTRACT_DISABLE_INVARIANTS` to disable precondition checking.
 #define invariant(...)            concat__(invariant, arg_count__(__VA_ARGS__)) \
                                       (__VA_ARGS__)
 #define invariant1(cond)          invariant2(cond, #cond)
-#define invariant2(cond, msg)     contract_check__(invariant, cond, msg)
+
+#if !defined(CONTRACT_DISABLE_INVARIANTS)
+#   define invariant2(cond, msg) contract_check__(invariant, cond, msg)
+#else
+#   define invariant2(cond, msg) do {} while (false && (cond))
+#endif
 
 namespace contract
 {
