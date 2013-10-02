@@ -22,7 +22,7 @@ run tests, see section "Building and running tests").  Here's a small and
 complete example of the library in action.  It defines a function with a
 contract consisting of a precondition and a postcondition.
 
-    #include <contract.hpp> // Lib.Contract library header
+    #include <contract/contract.hpp> // Lib.Contract library header
 
     #include <cstddef>      // for size_t
     #include <cstring>      // for strlen
@@ -60,7 +60,7 @@ block, `contract(fun)`, at the beginning of the function.
 
 To use the Lib.Contract library the following header file needs to be included:
 
-    #include <contract.hpp>
+    #include <contract/contract.hpp>
 
 It provides several macros that facilitate contract programming:
 
@@ -329,7 +329,7 @@ that contracts are defined properly.
 
 ### More documentation ###
 
-For additional documentation see `include/contract.hpp` file.
+For additional documentation see `include/contract/contract.hpp` file.
 
 ### Examples ###
 
