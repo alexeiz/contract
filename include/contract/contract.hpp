@@ -1,7 +1,7 @@
 #ifndef included_contract_hpp__
 #define included_contract_hpp__
 
-#include <detail/version.hpp>
+#include <contract/detail/version.hpp>
 
 #include <functional>
 #include <cstddef>
@@ -184,7 +184,7 @@ violation_handler get_handler();
 
 }  // namespace contract
 
-#include <detail/contract_imp.hpp>
+#include <contract/detail/contract_imp.hpp>
 
 // Copyright Alexei Zakharov, 2013.
 //

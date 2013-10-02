@@ -1,4 +1,4 @@
-#include <contract.hpp>
+#include <contract/contract.hpp>
 
 #include <boost/test/unit_test.hpp>
 
