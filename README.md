@@ -308,7 +308,7 @@ Where `contract::violation_context` struct is defined as follows:
 
 By default `handle_violation` prints a message to `std::cerr` with the
 information about the contract violation and then aborts the execution by
-calling `std::abort`.
+calling `std::terminate`.
 
 The behavior of `handle_violation` can be customized by providing a different
 violation handler function via `set_handler` and `get_handler` library
@@ -323,7 +323,7 @@ functions:
     }
 
 The custom handler is supposed to be `[[noreturn]]` like the default handler.
-If the custom handler returns, `std::abort` is called anyway.  However the
+If the custom handler returns, `std::terminate` is called anyway.  However the
 custom handler can throw an exception, which can be used in test code to ensure
 that contracts are defined properly.
 
