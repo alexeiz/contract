@@ -22,7 +22,7 @@ run tests, see section "Building and running tests").  Here's a small and
 complete example of the library in action.  It defines a function with a
 contract consisting of a precondition and a postcondition.
 
-    #include <contract.hpp> // Lib.Contract library header
+    #include <contract/contract.hpp> // Lib.Contract library header
 
     #include <cstddef>      // for size_t
     #include <cstring>      // for strlen
@@ -60,7 +60,7 @@ block, `contract(fun)`, at the beginning of the function.
 
 To use the Lib.Contract library the following header file needs to be included:
 
-    #include <contract.hpp>
+    #include <contract/contract.hpp>
 
 It provides several macros that facilitate contract programming:
 
@@ -308,7 +308,7 @@ Where `contract::violation_context` struct is defined as follows:
 
 By default `handle_violation` prints a message to `std::cerr` with the
 information about the contract violation and then aborts the execution by
-calling `std::abort`.
+calling `std::terminate`.
 
 The behavior of `handle_violation` can be customized by providing a different
 violation handler function via `set_handler` and `get_handler` library
@@ -323,13 +323,13 @@ functions:
     }
 
 The custom handler is supposed to be `[[noreturn]]` like the default handler.
-If the custom handler returns, `std::abort` is called anyway.  However the
+If the custom handler returns, `std::terminate` is called anyway.  However the
 custom handler can throw an exception, which can be used in test code to ensure
 that contracts are defined properly.
 
 ### More documentation ###
 
-For additional documentation see `include/contract.hpp` file.
+For additional documentation see `include/contract/contract.hpp` file.
 
 ### Examples ###
 

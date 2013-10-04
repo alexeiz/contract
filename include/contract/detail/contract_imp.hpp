@@ -4,7 +4,6 @@
 #include <type_traits>
 #include <iostream>
 #include <exception>
-#include <cstdlib>
 
 // implementation: macros
 //
@@ -334,7 +333,7 @@ void default_handler(violation_context const & context)
               << "message:   " << context.message << "\n"
               << "condition: " << context.condition << std::endl;
 
-    std::abort();
+    std::terminate();
 }
 
 // Holder for the currently installed contract failure handler.
@@ -357,7 +356,7 @@ void handle_violation(violation_context const & context)
     detail::handler_holder<>::current_handler(context);
 
     // if the handler returns, abort anyway to satisfy the [[noreturn]] contract
-    std::abort();
+    std::terminate();
 }
 
 inline
