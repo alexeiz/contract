@@ -327,6 +327,14 @@ If the custom handler returns, `std::terminate` is called anyway.  However the
 custom handler can throw an exception, which can be used in test code to ensure
 that contracts are defined properly.
 
+### Disabling contract checks ###
+
+You can disable preconditions, postconditions and invariants individually at 
+compile time by defining the compile time macros:
+*   CONTRACT_DISABLE_PRECONDITIONS
+*   CONTRACT_DISABLE_INVARIANTS
+*   CONTRACT_DISABLE_POSTCONDITIONS
+
 ### More documentation ###
 
 For additional documentation see `include/contract/contract.hpp` file.
