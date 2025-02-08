@@ -113,6 +113,15 @@ namespace detail
 // implementation: code behind macros
 //
 
+bool has_active_exceptions()
+{
+#if __cpp_lib_uncaught_exceptions >= 201411L
+    return std::uncaught_exceptions() > 0;
+#else
+    return std::uncaught_exception();
+#endif
+}
+
 // Context in which a contract check is done.  Controls which parts of the
 // contract are checked.
 struct contract_context
@@ -127,7 +136,7 @@ struct contract_context
     operator bool() { return true; }
 
     bool check_precondition()  const { return check_pre; }
-    bool check_postcondition() const { return check_post && !std::uncaught_exception(); }
+    bool check_postcondition() const { return check_post && !has_active_exceptions(); }
     bool check_invariant()     const { return check_inv; }
 
     bool check_pre;
@@ -179,7 +188,7 @@ struct class_contract_base
 
     ~class_contract_base() noexcept(false)
     {
-        if (exit_ && !std::uncaught_exception())
+        if (exit_ && !has_active_exceptions())
             obj_->class_contract__(
                 obj_->prepare_contract__(contract_context{false, false, true}));
     }
