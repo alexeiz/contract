@@ -113,7 +113,7 @@ namespace detail
 // implementation: code behind macros
 //
 
-bool has_active_exceptions()
+inline bool has_active_exceptions()
 {
 #if __cpp_lib_uncaught_exceptions >= 201411L
     return std::uncaught_exceptions() > 0;
