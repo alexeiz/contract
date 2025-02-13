@@ -2,8 +2,8 @@
 
 #include "contract_error.hpp"
 
-#include <boost/test/unit_test.hpp>
-
+namespace
+{
 void fun_contract_test_precondition(bool par)
 {
     contract(fun) { precondition(par); };
@@ -49,6 +49,10 @@ void fun_contract_test_all(bool pre, bool inv, bool post)
         postcondition(post);
     };
 }
+}  // anonymous namespace
+
+#include <contract/undef.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(fun_contract_precondition)
 {

@@ -1,7 +1,5 @@
 #include <contract/contract.hpp>
 
-#include <boost/test/unit_test.hpp>
-
 #include <iostream>
 #include <cstring>
 #include <cassert>
@@ -10,7 +8,6 @@
 
 namespace
 {
-
 class account
 {
 public:
@@ -124,8 +121,10 @@ int hash(char const * str)
 
     return hash;
 }
+}  // anonymous namespace
 
-}
+#include <contract/undef.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(examples)
 {

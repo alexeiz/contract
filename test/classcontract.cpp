@@ -2,11 +2,8 @@
 
 #include "contract_error.hpp"
 
-#include <boost/test/unit_test.hpp>
-
 namespace
 {
-
 class throwing_ctor_t {};
 
 class account
@@ -53,8 +50,10 @@ private:
 private:
     int balance_;
 };
+}  // anonymous namespace
 
-}
+#include <contract/undef.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
 {

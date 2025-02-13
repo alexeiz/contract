@@ -2,8 +2,8 @@
 
 #include "contract_error.hpp"
 
-#include <boost/test/unit_test.hpp>
-
+namespace
+{
 void loop_invariant_success()
 {
     for (int i = 0; i != 10; ++i)
@@ -38,6 +38,10 @@ void ignore_pre_postcondition()
         };
     }
 }
+}  // anonymous namespace
+
+#include <contract/undef.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(loop_invariant)
 {

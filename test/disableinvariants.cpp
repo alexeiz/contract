@@ -3,11 +3,8 @@
 
 #include "contract_error.hpp"
 
-#include <boost/test/unit_test.hpp>
-
 namespace
 {
-
 void test_disable_invariants()
 {
     contract (fun) { invariant(false); };
@@ -22,8 +19,10 @@ void test_disable_invariants_postcondition()
 {
     contract (fun) { postcondition(false); };
 }
+}  // anonymous namespace
 
-}
+#include <contract/undef.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(macro_disable_invariants)
 {
