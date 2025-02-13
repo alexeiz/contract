@@ -7,16 +7,19 @@ namespace
 class account
 {
 public:
-    account(int bal, bool skip_pre = false)
-        : balance_(-1)
+    account(int bal)
+        : balance_(bal)
+    {}
+
+    ~account() noexcept(false)
     {
-        contract(ctor)
+        contract(dtor)
         {
-            precondition(bal > 0 || skip_pre);
-            postcondition(balance_ > 0);
+            precondition(balance_ > 0);
+            postcondition(balance_ < 0);
         };
 
-        balance_ = bal;  // after balance_ is assigned the postcondition succeeds
+        balance_ -= 100;
     }
 
 private:
@@ -25,9 +28,11 @@ private:
 }  // anonymous namespace
 
 #include <contract/undef.hpp>
+
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE(ctor_contract)
+BOOST_AUTO_TEST_CASE(dtor_contract)
 {
     test::contract_handler_frame cframe;
 
@@ -39,7 +44,7 @@ BOOST_AUTO_TEST_CASE(ctor_contract)
                                             contract::type::precondition);
 
     // expect postcondition to fail
-    test::check_throw_on_contract_violation([] { account(0, true); },
+    test::check_throw_on_contract_violation([] { account(200); },
                                             contract::type::postcondition);
 }
 

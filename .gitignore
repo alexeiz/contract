@@ -12,11 +12,10 @@
 *.la
 *.a
 
-# waf
-.waf*
-.lock-waf*
-build/*
-*.pyc
+# local files
+build/
+Testing/
+.vscode/
 
 # editors temp files
 *.swp

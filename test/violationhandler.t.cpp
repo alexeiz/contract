@@ -3,6 +3,8 @@
 #include "contract_error.hpp"
 
 #include <contract/undef.hpp>
+
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(get_default_handler)
@@ -33,7 +35,7 @@ BOOST_AUTO_TEST_CASE(set_violation_handler)
         BOOST_CHECK_EQUAL(e.message(), "1 message");
         BOOST_CHECK_EQUAL(e.condition(), "2 expr");
         BOOST_CHECK_EQUAL(e.file(), "3 file");
-        BOOST_CHECK_EQUAL(e.line(), 4);
+        BOOST_CHECK_EQUAL(e.line(), 4u);
     }
     catch (...)
     {

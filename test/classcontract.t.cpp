@@ -53,6 +53,8 @@ private:
 }  // anonymous namespace
 
 #include <contract/undef.hpp>
+
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(class_contract_in_ctor_dtor)
