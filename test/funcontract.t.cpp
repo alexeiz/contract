@@ -52,6 +52,8 @@ void fun_contract_test_all(bool pre, bool inv, bool post)
 }  // anonymous namespace
 
 #include <contract/undef.hpp>
+
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(fun_contract_precondition)

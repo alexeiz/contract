@@ -6,18 +6,38 @@ macro (make_test test_name)
   add_test(NAME test_${test_name} COMMAND test_${test_name})
 endmacro ()
 
-make_test(contract
-  classcontract.cpp
-  contract_error.hpp
-  ctorcontract.cpp
-  derivedcontract.cpp
-  disableinvariants.cpp
-  disablepostconditions.cpp
-  disablepreconditions.cpp
-  dtorcontract.cpp
-  examples.cpp
-  funcontract.cpp
-  loopcontract.cpp
-  main.cpp
-  methcontract.cpp
-  violationhandler.cpp)
+make_test(classcontract
+  classcontract.t.cpp)
+
+make_test(ctorcontract
+  ctorcontract.t.cpp)
+
+make_test(derivedcontract
+  derivedcontract.t.cpp)
+
+make_test(disableinvariants
+  disableinvariants.t.cpp)
+
+make_test(disablepostconditions
+  disablepostconditions.t.cpp)
+
+make_test(disablepreconditions
+  disablepreconditions.t.cpp)
+
+make_test(dtorcontract
+  dtorcontract.t.cpp)
+
+make_test(examples
+  examples.t.cpp)
+
+make_test(funcontract
+  funcontract.t.cpp)
+
+make_test(loopcontract
+  loopcontract.t.cpp)
+
+make_test(methcontract
+  methcontract.t.cpp)
+
+make_test(violationhandler
+  violationhandler.t.cpp)

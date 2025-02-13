@@ -138,6 +138,8 @@ private:
 }  // anonymous namespace
 
 #include <contract/undef.hpp>
+
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(derived_contract_with_many_bases)
