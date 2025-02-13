@@ -4,7 +4,7 @@ import os.path
 top = '.'
 out = 'build'
 
-defflags = '-std=c++11'
+defflags = '-std=c++20'
 dbgflags = '-g -O0 -fno-inline'
 optflags = ''
 warnflags = '-Wall -Wno-attributes'
