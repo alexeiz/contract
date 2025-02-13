@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 project(
   contract
-  VERSION 0.2.3
+  VERSION 0.3.0
   LANGUAGES CXX)
 
 MESSAGE(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
