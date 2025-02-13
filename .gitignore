@@ -17,3 +17,12 @@
 .lock-waf*
 build/*
 *.pyc
+
+# editors temp files
+*.swp
+*.swo
+
+# tags
+GPATH
+GRTAGS
+GTAGS

@@ -3,8 +3,7 @@
 
 #include <contract/contract.hpp>
 
-#include <boost/test/unit_test.hpp>
-
+#include <cassert>
 #include <exception>
 #include <stdexcept>
 #include <sstream>
@@ -12,7 +11,6 @@
 
 namespace test
 {
-
 struct non_contract_error {};
 
 struct contract_error : std::exception
@@ -113,15 +111,15 @@ void check_throw_on_contract_violation(Func f, contract::type type)
     catch (test::contract_error & e)
     {
         caught_exception = true;
-        BOOST_CHECK(e.type() == type);
+        assert(e.type() == type);
     }
     catch (...)
     {
         caught_exception = true;
-        BOOST_FAIL("expected to catch test::contract_error");
+        assert(0 && "expected to catch test::contract_error");
     }
 
-    BOOST_CHECK(caught_exception);
+    assert(caught_exception);
 }
 
 template <typename Func>
@@ -136,21 +134,20 @@ void check_throw_on_contract_violation(Func f, contract::type type, char const *
     catch (test::contract_error & e)
     {
         caught_exception = true;
-        BOOST_CHECK(e.type() == type);
-        BOOST_CHECK(e.message() == std::string(msg));
+        assert(e.type() == type);
+        assert(e.message() == std::string(msg));
     }
     catch (...)
     {
         caught_exception = true;
-        BOOST_FAIL("expected to catch test::contract_error");
+        assert("expected to catch test::contract_error");
     }
 
-    BOOST_CHECK(caught_exception);
+    assert(caught_exception);
 }
+}  // namespace test
 
-}
-
-// Copyright Alexei Zakharov, 2013.
+// Copyright Alexei Zakharov, 2025.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at

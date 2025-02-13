@@ -1,6 +1,6 @@
 # Lib.Contract #
 
-Library to support contract programming in C++11.
+Library to support contract programming in C++11 and later.
 
 ## Overview ##
 
@@ -327,6 +327,14 @@ If the custom handler returns, `std::terminate` is called anyway.  However the
 custom handler can throw an exception, which can be used in test code to ensure
 that contracts are defined properly.
 
+### Disabling contract checks ###
+
+You can disable preconditions, postconditions and invariants individually at 
+compile time by defining the compile time macros:
+*   CONTRACT_DISABLE_PRECONDITIONS
+*   CONTRACT_DISABLE_INVARIANTS
+*   CONTRACT_DISABLE_POSTCONDITIONS
+
 ### More documentation ###
 
 For additional documentation see `include/contract/contract.hpp` file.
@@ -348,11 +356,11 @@ process with waf looks like this:
     $ tools/waf install            # install headers using the specified prefix (default /usr/local)
 
 Run `tools/waf --help` for more configuration and build options.  Waf requires
-Python 2.6 or later.
+Python 3.8 or later.
 
 ## Requirements ##
 
-* Python 2.6 or later.
+* Python 3.8 or later.
 * G++ 4.8 or later or Clang 3.3 or later.  If compiled with Clang, libc++
   library may also be required.
 * Boost version 1.50 or later is required to compile and run tests.
