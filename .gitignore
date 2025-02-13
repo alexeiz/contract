@@ -15,7 +15,8 @@
 # waf
 .waf*
 .lock-waf*
-build/*
+build/
+Testing/
 *.pyc
 
 # editors temp files

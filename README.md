@@ -329,7 +329,7 @@ that contracts are defined properly.
 
 ### Disabling contract checks ###
 
-You can disable preconditions, postconditions and invariants individually at 
+You can disable preconditions, postconditions and invariants individually at
 compile time by defining the compile time macros:
 *   CONTRACT_DISABLE_PRECONDITIONS
 *   CONTRACT_DISABLE_INVARIANTS
@@ -346,28 +346,22 @@ repository and also other feature-specific tests in `test` directory.
 
 ## Building and running tests ##
 
-Lib.Contract uses the waf build system.  The simplified build/install
-process with waf looks like this:
+Lib.Contract uses the CMake build system.  The simplified build/install process
+looks like this:
 
     # in the root directory of the repo
-    $ tools/waf configure          # configure the build (--prefix=PREFIX for installation prefix)
-    $ tools/waf build              # build library and run tests
-    $ tools/waf build --notests    # build without tests
-    $ tools/waf install            # install headers using the specified prefix (default /usr/local)
-
-Run `tools/waf --help` for more configuration and build options.  Waf requires
-Python 3.8 or later.
+    $ cmake --preset default .
+    $ cmake --build build --config Debug --target all
+    $ ctest --preset default
 
 ## Requirements ##
 
-* Python 3.8 or later.
-* G++ 4.8 or later or Clang 3.3 or later.  If compiled with Clang, libc++
-  library may also be required.
-* Boost version 1.50 or later is required to compile and run tests.
+* GCC 10 is needed for C++17 support.
+* Boost version 1.81 or later is required to compile and run tests.
 
 ## Limitations ##
 
-* The library works only in C++11 mode on resonably modern C++ compilers.
+* The library works only in C++17 mode on resonably modern C++ compilers.
 * The contract of a virtual function of a base class overriden in a derived
   class is not checked.  The derived function has to duplicate the contract of
   the base class function.
