@@ -359,6 +359,17 @@ looks like this:
 * GCC 10 is needed for C++17 support.
 * Boost version 1.81 or later is required to compile and run tests.
 
+## CMake integration ##
+
+Lib.Contract provides a CMake package configuration for use with `find_package`.
+
+After building and installing, you can consume the library in your CMake project:
+
+```cmake
+find_package(contract CONFIG REQUIRED)
+target_link_libraries(<your_target> PRIVATE contract::contract)
+```
+
 ## Limitations ##
 
 * The library works only in C++17 mode on resonably modern C++ compilers.
