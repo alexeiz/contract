@@ -25,8 +25,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Deps.cmake)
 
+# generate version header
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/contract/detail)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/contract/detail/version.hpp.in
+  ${CMAKE_CURRENT_BINARY_DIR}/include/contract/detail/version.hpp
+  @ONLY
+)
+
 # include directories and source files
-include_directories(include)
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
 # tests
 enable_testing()
@@ -36,3 +47,9 @@ add_subdirectory(test)
 include(GNUInstallDirs)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp")
+
+# install generated version header
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/include/contract/detail/version.hpp
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/contract/detail
+)
