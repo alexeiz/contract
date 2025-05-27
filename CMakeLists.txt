@@ -31,3 +31,8 @@ include_directories(include)
 # tests
 enable_testing()
 add_subdirectory(test)
+
+# install header files
+include(GNUInstallDirs)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hpp")
