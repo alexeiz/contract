@@ -13,6 +13,7 @@
 *.a
 
 # local files
+CMakeUserPresets.json
 build/
 Testing/
 .vscode/
