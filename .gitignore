@@ -26,3 +26,6 @@ Testing/
 GPATH
 GRTAGS
 GTAGS
+
+# Gemini context file
+GEMINI.md
