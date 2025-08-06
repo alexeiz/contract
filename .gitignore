@@ -13,6 +13,7 @@
 *.a
 
 # local files
+CMakeUserPresets.json
 build/
 Testing/
 .vscode/
@@ -25,3 +26,6 @@ Testing/
 GPATH
 GRTAGS
 GTAGS
+
+# Gemini context file
+GEMINI.md
