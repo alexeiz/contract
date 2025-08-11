@@ -27,5 +27,6 @@ GPATH
 GRTAGS
 GTAGS
 
-# Gemini context file
+# AI context files
 GEMINI.md
+AGENTS.md
