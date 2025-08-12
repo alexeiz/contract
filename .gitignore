@@ -30,3 +30,4 @@ GTAGS
 # AI context files
 GEMINI.md
 AGENTS.md
+.aider*
