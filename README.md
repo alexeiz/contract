@@ -22,32 +22,34 @@ run tests, see section "Building and running tests").  Here's a small and
 complete example of the library in action.  It defines a function with a
 contract consisting of a precondition and a postcondition.
 
-    #include <contract/contract.hpp> // Lib.Contract library header
+``` cpp
+#include <contract/contract.hpp> // Lib.Contract library header
 
-    #include <cstddef>      // for size_t
-    #include <cstring>      // for strlen
+#include <cstddef>      // for size_t
+#include <cstring>      // for strlen
 
-    std::size_t my_strlen(char const * str)
+std::size_t my_strlen(char const * str)
+{
+    std::size_t len = 0;
+
+    contract(fun)      // defines the contract for this function
     {
-        std::size_t len = 0;
+        precondition(str, "invalid argument");
+        postcondition(len == std::strlen(str), "incorrect return value");
+    };
 
-        contract(fun)      // defines the contract for this function
-        {
-            precondition(str, "invalid argument");
-            postcondition(len == std::strlen(str), "incorrect return value");
-        };
+    for (char const * p = str; *p; ++len, ++p)
+        ;
 
-        for (char const * p = str; *p; ++len, ++p)
-            ;
+    return len;
+}
 
-        return len;
-    }
-
-    int main()
-    {
-        my_strlen("abc");    // all good: contract checks pass
-        my_strlen(nullptr);  // error: precondition is violated
-    }
+int main()
+{
+    my_strlen("abc");    // all good: contract checks pass
+    my_strlen(nullptr);  // error: precondition is violated
+}
+```
 
 The above function, `my_strlen`, has a contract with a precondition that
 requires the input parameter `str` to be non-NULL and a postcondition that
@@ -60,11 +62,15 @@ block, `contract(fun)`, at the beginning of the function.
 
 To use the Lib.Contract library the following header file needs to be included:
 
-    #include <contract/contract.hpp>
+``` cpp
+#include <contract/contract.hpp>
+```
 
 It provides several macros that facilitate contract programming:
 
-    contract(type) { /* contract block */ };
+``` cpp
+contract(type) { /* contract block */ };
+```
 
 > Defines a contract block of a specific `type`, where `type` can be one of the
 > following:
@@ -107,12 +113,14 @@ information.
 A function contract block should be defined inside a free function using the
 following syntax:
 
-    contract(fun)
-    {
-        precondition(<precond-expr> [, <message>]);
-        invariant(<inv-expr> [, <message>]);
-        postcondition(<post-expr> [, <message>]);
-    };
+``` cpp
+contract(fun)
+{
+    precondition(<precond-expr> [, <message>]);
+    invariant(<inv-expr> [, <message>]);
+    postcondition(<post-expr> [, <message>]);
+};
+```
 
 The `invariant` contract check is usually not needed in the function contract
 block unless a function needs to maintain some global invariant.
@@ -132,12 +140,14 @@ similar to a function contract block, but it also provides an additional
 capability of enforcing class contracts.  The syntax for the method contract
 block is the following:
 
-    contract(this)
-    {
-        precondition(<precond-expr> [, <message>]);
-        invariant(<inv-expr> [, <message>]);
-        postcondition(<post-expr> [, <message>]);
-    };
+``` cpp
+contract(this)
+{
+    precondition(<precond-expr> [, <message>]);
+    invariant(<inv-expr> [, <message>]);
+    postcondition(<post-expr> [, <message>]);
+};
+```
 
 See the class invariant contract block description for details on how the
 method contract blocks can enforce class invariants.
@@ -156,12 +166,14 @@ A constructor contract block should be defined inside of a constructor of a
 class.  It is similar to a method contract block with some exceptions.  The
 syntaxt for the constructor contract block is the following:
 
-    contract(ctor)
-    {
-        precondition(<precond-expr> [, <message>]);
-        invariant(<inv-expr> [, <message>]);
-        postcondition(<post-expr> [, <message>]);
-    };
+``` cpp
+contract(ctor)
+{
+    precondition(<precond-expr> [, <message>]);
+    invariant(<inv-expr> [, <message>]);
+    postcondition(<post-expr> [, <message>]);
+};
+```
 
 The `invariant` contract check is usually not needed in the constructor
 contract block unless the constructor needs to maintain some global invariant.
@@ -180,12 +192,14 @@ A destructor contract block should be defined inside of a destructor of a
 class.  It is similar to a method contract block with some exceptions.  The
 syntaxt for the destructor contract block is the following:
 
-    contract(dtor)
-    {
-        precondition(<precond-expr> [, <message>]);
-        invariant(<inv-expr> [, <message>]);
-        postcondition(<post-expr> [, <message>]);
-    };
+``` cpp
+contract(dtor)
+{
+    precondition(<precond-expr> [, <message>]);
+    invariant(<inv-expr> [, <message>]);
+    postcondition(<post-expr> [, <message>]);
+};
+```
 
 The `invariant` contract check is usually not needed in the destructor contract
 block unless the destructor needs to maintain some global invariant.
@@ -205,18 +219,20 @@ A class contract block should be defined inside a class.  It defines the
 invariant contract for the class.  The syntax for the class contract block is
 the following:
 
-    class MyClass
+``` cpp
+class MyClass
+{
+    // ...
+
+private:
+    contract(class)
     {
-        // ...
-
-    private:
-        contract(class)
-        {
-            invariant(<inv-expr> [, <message>]);
-        };
-
-        // ...
+        invariant(<inv-expr> [, <message>]);
     };
+
+    // ...
+};
+```
 
 A class contract block can also contain precondition and postcondition checks,
 but those are not enforces (ignored).
@@ -242,18 +258,20 @@ from one or more base classes with a class invariant contract.  It defines the
 invariant for the derived class and also enforces invariants of the base
 classes.  The syntax for the derived class contract block is the following:
 
-    class MyClass : public Base1 [, public Base2, ..., public BaseN]
+``` cpp
+class MyClass : public Base1 [, public Base2, ..., public BaseN]
+{
+    // ...
+
+private:
+    contract(derived)(Base1 [, Base2, ..., BaseN])
     {
-        // ...
-
-    private:
-        contract(derived)(Base1 [, Base2, ..., BaseN])
-        {
-            invariant(<inv-expr> [, <message>]);
-        };
-
-        // ...
+        invariant(<inv-expr> [, <message>]);
     };
+
+    // ...
+};
+```
 
 The behavior of the derived class contract block is identical to the class
 contract block with the exception that all base class invariants are also
@@ -265,10 +283,12 @@ A loop invariant contract block is a special contract block for enforcing loop
 invariants.  It should be defined inside a loop.  The syntax for the loop
 invariant contract block is the following:
 
-    contract(loop)
-    {
-        invariant(<inv-expr> [, <message>]);
-    };
+``` cpp
+contract(loop)
+{
+    invariant(<inv-expr> [, <message>]);
+};
+```
 
 Precondition and postcondition contract checks inside a loop invariant contract
 block are not enforced (ignored).  The invariant contract check is checked on
@@ -279,32 +299,36 @@ every iteration of the loop.
 When a contract is violated by not satisfying any of its contract conditions,
 the following function is called to handle the contract violation:
 
-    namespace contract
-    {
-        [[noreturn]]
-        void handle_violation(violation_context const & context);
-    }
+``` cpp
+namespace contract
+{
+    [[noreturn]]
+    void handle_violation(violation_context const & context);
+}
+```
 
 Where `contract::violation_context` struct is defined as follows:
 
-    namespace contract
+``` cpp
+namespace contract
+{
+    enum class type
     {
-        enum class type
-        {
-            precondition,
-            postcondition,
-            invariant
-        };
+        precondition,
+        postcondition,
+        invariant
+    };
 
-        struct violation_context
-        {
-            contract::type contract_type; // type of the failed contract check macro
-            char const * message;         // message passed to the contract check macro
-            char const * condition;       // condition of the contract check
-            char const * file;            // file in which the contract check occurs
-            std::size_t line;             // line on which the contact check occurs
-        };
-    }
+    struct violation_context
+    {
+        contract::type contract_type; // type of the failed contract check macro
+        char const * message;         // message passed to the contract check macro
+        char const * condition;       // condition of the contract check
+        char const * file;            // file in which the contract check occurs
+        std::size_t line;             // line on which the contact check occurs
+    };
+}
+```
 
 By default `handle_violation` prints a message to `std::cerr` with the
 information about the contract violation and then aborts the execution by
@@ -314,13 +338,15 @@ The behavior of `handle_violation` can be customized by providing a different
 violation handler function via `set_handler` and `get_handler` library
 functions:
 
-    namespace contract
-    {
-        using violation_handler = std::function<void (violation_context const &)>;
+``` cpp
+namespace contract
+{
+    using violation_handler = std::function<void (violation_context const &)>;
 
-        violation_handler set_handler(violation_handler new_handler);
-        violation_handler get_handler();
-    }
+    violation_handler set_handler(violation_handler new_handler);
+    violation_handler get_handler();
+}
+```
 
 The custom handler is supposed to be `[[noreturn]]` like the default handler.
 If the custom handler returns, `std::terminate` is called anyway.  However the
@@ -353,6 +379,22 @@ looks like this:
     $ cmake --preset default .
     $ cmake --build build --config Debug --target all
     $ ctest --preset default
+
+Note: configuring with tests enabled may download Boost via CPM if a local
+Boost is not found. To configure without network access, disable tests:
+
+    $ cmake --preset default -DBUILD_TESTING=OFF .
+
+You can re-enable tests later by re-configuring with `-DBUILD_TESTING=ON`.
+
+## Quick summary of Build, Test, and Development Commands ##
+
+- Configure (Debug, Ninja/GCC): `cmake --preset default .`
+- Build all targets: `cmake --build build --config Debug --target all`
+- Run all tests: `ctest --preset default`
+- Release configure/build: `cmake --preset release .` then `cmake --build build --config RelWithDebInfo`
+- Run a single test binary: `./build/test/test_feature`
+- Offline configure: add `-DBUILD_TESTING=OFF` to avoid CPM Boost download
 
 ## Requirements ##
 
