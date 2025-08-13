@@ -2,27 +2,17 @@ cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 project(
   contract
-  VERSION 0.4.2
+  VERSION 0.4.3
   LANGUAGES CXX)
 
 MESSAGE(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
-# set build type
-set(default_build_type "Debug")
-if (NOT CMAKE_BUILD_TYPE)
-  message(STATUS "Setting build type to '${default_build_type}'")
-
-  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
-      STRING "Choose build type." FORCE)
-
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY
-      STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif ()
-
-# set compiler flags
+# C++ standard
 set(CMAKE_CXX_STANDARD   17)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# dependencies
 include(cmake/deps.cmake)
 
 # generate version header
@@ -39,9 +29,11 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# tests
-enable_testing()
-add_subdirectory(test)
+# tests (only when enabled)
+include(CTest)
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
 
 # install header files
 include(GNUInstallDirs)
@@ -61,6 +53,9 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+# enforce C++17 on consumers
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 include(cmake/genconfig.cmake)
 include(cmake/install.cmake)
