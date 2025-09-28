@@ -43,18 +43,14 @@ BOOST_AUTO_TEST_CASE(method_contract)
     BOOST_CHECK_NO_THROW(account(10).balance(20));
 
     // expect precondition to fail
-    test::check_throw_on_contract_violation([]{ account(10).balance(-1); },
-                                            contract::type::precondition);
+    test::check_throw_on_contract_violation([] { account(10).balance(-1); }, contract::type::precondition);
 
     // expect postcondition to fail
-    test::check_throw_on_contract_violation([]{ account(10).balance(5); },
-                                            contract::type::postcondition);
+    test::check_throw_on_contract_violation([] { account(10).balance(5); }, contract::type::postcondition);
 
     // expect invariant to fail
-    test::check_throw_on_contract_violation([]{ account(-10).balance(5); },
-                                            contract::type::invariant);
-    test::check_throw_on_contract_violation([]{ account(0).balance(0); },
-                                            contract::type::invariant);
+    test::check_throw_on_contract_violation([] { account(-10).balance(5); }, contract::type::invariant);
+    test::check_throw_on_contract_violation([] { account(0).balance(0); }, contract::type::invariant);
 }
 
 // Copyright Alexei Zakharov, 2025.

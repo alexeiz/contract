@@ -1,0 +1,60 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+AccessModifierOffset: -4
+UseTab: Never
+ColumnLimit: 120
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+NamespaceIndentation: None
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Right
+SpaceBeforeParens: ControlStatementsExceptControlMacros
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true
+AlignOperands: Align
+BreakBeforeConceptDeclarations: Always
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakTemplateDeclarations: Yes
+CompactNamespaces: false
+FixNamespaceComments: true
+IncludeBlocks: Preserve
+IndentCaseLabels: false
+IndentPPDirectives: None
+KeepEmptyLines:
+  AtEndOfFile: false
+  AtStartOfBlock: false
+  AtStartOfFile: false
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Middle
+ReflowComments: true
+SortIncludes: false
+SortUsingDeclarations: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+SpacesBeforeTrailingComments: 2
+Standard: c++17

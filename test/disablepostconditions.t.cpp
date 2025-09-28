@@ -7,17 +7,17 @@ namespace
 {
 void test_disable_postconditions()
 {
-    contract (fun) { postcondition(false); };
+    contract(fun) { postcondition(false); };
 }
 
 void test_disable_postconditions_precondition()
 {
-    contract (fun) { precondition(false); };
+    contract(fun) { precondition(false); };
 }
 
 void test_disable_postconditions_invariant()
 {
-    contract (fun) { invariant(false); };
+    contract(fun) { invariant(false); };
 }
 }  // anonymous namespace
 
@@ -34,12 +34,10 @@ BOOST_AUTO_TEST_CASE(macro_disable_postconditions)
     BOOST_CHECK_NO_THROW(test_disable_postconditions());
 
     // expect precondition to fail
-    BOOST_CHECK_THROW(test_disable_postconditions_precondition(),
-                      test::contract_error);
+    BOOST_CHECK_THROW(test_disable_postconditions_precondition(), test::contract_error);
 
     // expect invariant to fail
-    BOOST_CHECK_THROW(test_disable_postconditions_invariant(),
-                      test::contract_error);
+    BOOST_CHECK_THROW(test_disable_postconditions_invariant(), test::contract_error);
 }
 
 // Copyright Alexei Zakharov, 2025.

@@ -12,14 +12,14 @@ public:
     account(int bal)
         : balance_(-1)
     {
-        contract(ctor) {};
+        contract(ctor){};
         balance_ = bal;  // the class contract is checked on constructor exit
     }
 
     account(throwing_ctor_t)
         : balance_(-1)
     {
-        contract(ctor) {};
+        contract(ctor){};
         throw test::non_contract_error{};
     }
 
@@ -27,19 +27,19 @@ public:
                                 // an exception; if the contract check aborts
                                 // the destructor can and should be noexcept
     {
-        contract(dtor) {};
+        contract(dtor){};
         balance_ = -1;  // the class contract is checked on destructor entry
     }
 
     int balance() const
     {
-        contract(this) {};
+        contract(this){};
         return balance_;
     }
 
     void balance(int bal)
     {
-        contract(this) {};
+        contract(this){};
         balance_ = bal;  // the class contract is checked both on method
                          // entry and exit
     }

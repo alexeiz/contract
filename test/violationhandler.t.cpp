@@ -22,11 +22,7 @@ BOOST_AUTO_TEST_CASE(set_violation_handler)
     try
     {
         contract::handle_violation(
-            contract::violation_context{contract::type::postcondition,
-                                        "1 message",
-                                        "2 expr",
-                                        "3 file",
-                                        4});
+            contract::violation_context{contract::type::postcondition, "1 message", "2 expr", "3 file", 4});
     }
     catch (test::contract_error & e)
     {

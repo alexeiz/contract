@@ -19,8 +19,7 @@ struct contract_error : std::exception
         : context_{context}
     {
         std::ostringstream err;
-        err << context.file << ':' << context.line
-            << ": error: contract violation of type '";
+        err << context.file << ':' << context.line << ": error: contract violation of type '";
 
         char const * type_str;
 
@@ -44,10 +43,7 @@ struct contract_error : std::exception
         error_ = err.str();
     }
 
-    char const * what() const noexcept override
-    {
-        return error_.c_str();
-    }
+    char const * what() const noexcept override { return error_.c_str(); }
 
     contract::type type() const { return context_.contract_type; }
     char const * message() const { return context_.message; }
@@ -60,27 +56,18 @@ private:
     std::string error_;
 };
 
-inline
-void throw_contract_error(contract::violation_context const & context)
-{
-    throw contract_error(context);
-}
+inline void throw_contract_error(contract::violation_context const & context) { throw contract_error(context); }
 
 template <typename = void>
 struct terminate_holder
 {
-    static
-    std::terminate_handler default_terminate;
+    static std::terminate_handler default_terminate;
 };
 
 template <typename T>
 std::terminate_handler terminate_holder<T>::default_terminate{nullptr};
 
-inline
-void terminate()
-{
-    terminate_holder<>::default_terminate();
-}
+inline void terminate() { terminate_holder<>::default_terminate(); }
 
 struct contract_handler_frame
 {

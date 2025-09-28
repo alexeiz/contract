@@ -65,18 +65,14 @@ BOOST_AUTO_TEST_CASE(fun_contract_precondition)
     BOOST_CHECK_NO_THROW(fun_contract_test_precondition(true, "message"));
 
     // expect precondition to fail
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_precondition(false); },
-        contract::type::precondition);
+    test::check_throw_on_contract_violation([] { fun_contract_test_precondition(false); },
+                                            contract::type::precondition);
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_precondition(false, "precondition"); },
-        contract::type::precondition,
-        "precondition");
+    test::check_throw_on_contract_violation([] { fun_contract_test_precondition(false, "precondition"); },
+                                            contract::type::precondition, "precondition");
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_all(false, true, true); },
-        contract::type::precondition);
+    test::check_throw_on_contract_violation([] { fun_contract_test_all(false, true, true); },
+                                            contract::type::precondition);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_invariant)
@@ -88,18 +84,13 @@ BOOST_AUTO_TEST_CASE(fun_contract_invariant)
     BOOST_CHECK_NO_THROW(fun_contract_test_invariant(true, "message"));
 
     // expect invariant to fail
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_invariant(false); },
-        contract::type::invariant);
+    test::check_throw_on_contract_violation([] { fun_contract_test_invariant(false); }, contract::type::invariant);
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_invariant(false, "invariant"); },
-        contract::type::invariant,
-        "invariant");
+    test::check_throw_on_contract_violation([] { fun_contract_test_invariant(false, "invariant"); },
+                                            contract::type::invariant, "invariant");
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_all(true, false, true); },
-        contract::type::invariant);
+    test::check_throw_on_contract_violation([] { fun_contract_test_all(true, false, true); },
+                                            contract::type::invariant);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
@@ -111,22 +102,17 @@ BOOST_AUTO_TEST_CASE(fun_contract_postcondition)
     BOOST_CHECK_NO_THROW(fun_contract_test_postcondition(true, "message"));
 
     // expect postcondition to fail
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_postcondition(false); },
-        contract::type::postcondition);
+    test::check_throw_on_contract_violation([] { fun_contract_test_postcondition(false); },
+                                            contract::type::postcondition);
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_postcondition(false, "postcondition"); },
-        contract::type::postcondition,
-        "postcondition");
+    test::check_throw_on_contract_violation([] { fun_contract_test_postcondition(false, "postcondition"); },
+                                            contract::type::postcondition, "postcondition");
 
-    test::check_throw_on_contract_violation(
-        []{ fun_contract_test_all(true, true, false); },
-        contract::type::postcondition);
+    test::check_throw_on_contract_violation([] { fun_contract_test_all(true, true, false); },
+                                            contract::type::postcondition);
 
     // skip postcondition if function throws
-    BOOST_CHECK_THROW(fun_contract_test_postcondition_exception(),
-                      test::non_contract_error);
+    BOOST_CHECK_THROW(fun_contract_test_postcondition_exception(), test::non_contract_error);
 }
 
 BOOST_AUTO_TEST_CASE(fun_contract_all)

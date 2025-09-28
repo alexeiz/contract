@@ -12,19 +12,13 @@ public:
     base_account(double rate)
         : interest_rate_(rate)
     {
-        contract(ctor) {};
+        contract(ctor){};
     }
 
-    ~base_account()
-    {
-        interest_rate_ = -1;
-    }
+    ~base_account() { interest_rate_ = -1; }
 
 private:
-    contract(class)
-    {
-        invariant(interest_rate_ >= 0);
-    };
+    contract(class) { invariant(interest_rate_ >= 0); };
 
 protected:
     // derived class can change the state
@@ -39,7 +33,7 @@ public:
         : base_account(rate)
         , balance_(-1)
     {
-        contract(ctor) {};
+        contract(ctor){};
         balance_ = bal;  // the class contract is checked on constructor exit
     }
 
@@ -47,7 +41,7 @@ public:
         : base_account(1)
         , balance_(-1)
     {
-        contract(ctor) {};
+        contract(ctor){};
         throw test::non_contract_error{};
     }
 
@@ -55,32 +49,32 @@ public:
                                 // an exception; if the contract check aborts
                                 // the destructor can and should be noexcept
     {
-        contract(dtor) {};
+        contract(dtor){};
         balance_ = -1;  // the class contract is checked on destructor entry
     }
 
     int balance() const
     {
-        contract(this) {};
+        contract(this){};
         return balance_;
     }
 
     void balance(int bal)
     {
-        contract(this) {};
+        contract(this){};
         balance_ = bal;  // the class contract is checked both on method
                          // entry and exit
     }
 
     double interest_rate() const
     {
-        contract(this) {};
+        contract(this){};
         return interest_rate_;
     }
 
     void interest_rate(double rate)
     {
-        contract(this) {};
+        contract(this){};
         interest_rate_ = rate;
     }
 
@@ -100,40 +94,27 @@ class base_no_invariant2 {};
 class derived_with_invariant : public base_no_invariant
 {
 public:
-    derived_with_invariant()
-    {
-        contract(ctor) {};
-    }
+    derived_with_invariant() { contract(ctor){}; }
 
 private:
-    contract(derived)(base_no_invariant)
-    {
-        invariant(true);
-    };
+    contract(derived)(base_no_invariant) { invariant(true); };
 };
 
 
 class base_with_invariant
 {
 private:
-    contract(class)
-    {
-        invariant(true);
-    };
+    contract(class) { invariant(true); };
 };
 
 // Derived class with more than one base class.
-class derived_with_many_bases : public derived_with_invariant
-                              , public base_with_invariant
-                              , public base_no_invariant2
+class derived_with_many_bases
+    : public derived_with_invariant
+    , public base_with_invariant
+    , public base_no_invariant2
 {
 private:
-    contract(derived)(derived_with_invariant,
-                      base_with_invariant,
-                      base_no_invariant2)
-    {
-        invariant(true);
-    };
+    contract(derived)(derived_with_invariant, base_with_invariant, base_no_invariant2) { invariant(true); };
 };
 }  // anonymous namespace
 

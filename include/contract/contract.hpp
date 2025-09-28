@@ -38,9 +38,8 @@
 //        evaluates to `false`.
 //
 // Use macro `CONTRACT_DISABLE_PRECONDITIONS` to disable precondition checking.
-#define precondition(...)         concat__(precondition, arg_count__(__VA_ARGS__)) \
-                                      (__VA_ARGS__)
-#define precondition1(cond)       precondition2(cond, #cond)
+#define precondition(...)   concat__(precondition, arg_count__(__VA_ARGS__))(__VA_ARGS__)
+#define precondition1(cond) precondition2(cond, #cond)
 
 #if !defined(CONTRACT_DISABLE_PRECONDITIONS)
 #   define precondition2(cond, msg) contract_check__(precondition, cond, msg)
@@ -63,9 +62,8 @@
 //        evaluates to `false`.
 //
 // Use macro `CONTRACT_DISABLE_POSTCONDITIONS` to disable precondition checking.
-#define postcondition(...)        concat__(postcondition, arg_count__(__VA_ARGS__)) \
-                                      (__VA_ARGS__)
-#define postcondition1(cond)      postcondition2(cond, #cond)
+#define postcondition(...)   concat__(postcondition, arg_count__(__VA_ARGS__))(__VA_ARGS__)
+#define postcondition1(cond) postcondition2(cond, #cond)
 
 #if !defined(CONTRACT_DISABLE_POSTCONDITIONS)
 #   define postcondition2(cond, msg) contract_check__(postcondition, cond, msg)
@@ -96,9 +94,8 @@
 //        evaluates to `false`.
 //
 // Use macro `CONTRACT_DISABLE_INVARIANTS` to disable precondition checking.
-#define invariant(...)            concat__(invariant, arg_count__(__VA_ARGS__)) \
-                                      (__VA_ARGS__)
-#define invariant1(cond)          invariant2(cond, #cond)
+#define invariant(...)   concat__(invariant, arg_count__(__VA_ARGS__))(__VA_ARGS__)
+#define invariant1(cond) invariant2(cond, #cond)
 
 #if !defined(CONTRACT_DISABLE_INVARIANTS)
 #   define invariant2(cond, msg) contract_check__(invariant, cond, msg)
@@ -132,11 +129,7 @@ enum class type
 // contract check macro detects a contract violation.
 struct violation_context
 {
-    violation_context(contract::type t,
-                      char const * m,
-                      char const * c,
-                      char const * f,
-                      std::size_t l)
+    violation_context(contract::type t, char const * m, char const * c, char const * f, std::size_t l)
         : contract_type{t}
         , message{m}
         , condition{c}
@@ -144,11 +137,11 @@ struct violation_context
         , line{l}
     {}
 
-    contract::type contract_type; // type of the failed contract check macro
-    char const * message;         // message passed to the contract check macro
-    char const * condition;       // condition of the contract check
-    char const * file;            // file in which the contract check occures
-    std::size_t line;             // line on which the contact check occures
+    contract::type contract_type;  // type of the failed contract check macro
+    char const * message;          // message passed to the contract check macro
+    char const * condition;        // condition of the contract check
+    char const * file;             // file in which the contract check occures
+    std::size_t line;              // line on which the contact check occures
 };
 
 // Handle contract violation.
@@ -163,7 +156,7 @@ struct violation_context
 void handle_violation(violation_context const & context);
 
 // Type alias for the contract violation handler function.
-using violation_handler = std::function<void (violation_context const &)>;
+using violation_handler = std::function<void(violation_context const &)>;
 
 // Set contract violation handler.
 //

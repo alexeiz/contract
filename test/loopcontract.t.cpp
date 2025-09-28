@@ -20,10 +20,7 @@ void loop_invariant_failure()
 {
     for (int i = 0; i != 10; ++i)
     {
-        contract(loop)
-        {
-            invariant((i & 1) == 0);
-        };
+        contract(loop) { invariant((i & 1) == 0); };
     }
 }
 

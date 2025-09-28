@@ -52,7 +52,7 @@ public:
 
     int balance() const
     {
-        contract(this) {};
+        contract(this){};
         return balance_;
     }
 

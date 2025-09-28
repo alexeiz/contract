@@ -37,12 +37,10 @@ BOOST_AUTO_TEST_CASE(ctor_contract)
     BOOST_CHECK_NO_THROW(account(10));
 
     // expect precondition to fail
-    test::check_throw_on_contract_violation([] { account(0); },
-                                            contract::type::precondition);
+    test::check_throw_on_contract_violation([] { account(0); }, contract::type::precondition);
 
     // expect postcondition to fail
-    test::check_throw_on_contract_violation([] { account(0, true); },
-                                            contract::type::postcondition);
+    test::check_throw_on_contract_violation([] { account(0, true); }, contract::type::postcondition);
 }
 
 // Copyright Alexei Zakharov, 2025.

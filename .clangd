@@ -1,0 +1,2 @@
+CompileFlags:
+  Remove: [-fdeps-format=*, -fmodule-mapper=*, -fdiagnostics-all-candidates, -fmodules-ts]
