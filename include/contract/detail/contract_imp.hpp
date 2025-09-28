@@ -293,7 +293,7 @@ inline void default_handler(violation_context const & context)
 {
     std::cerr << context.file << ':' << context.line << ": error: contract violation of type '";
 
-    char const * type_str;
+    char const * type_str{};
 
     switch (context.contract_type)
     {

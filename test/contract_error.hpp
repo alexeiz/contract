@@ -21,7 +21,7 @@ struct contract_error : std::exception
         std::ostringstream err;
         err << context.file << ':' << context.line << ": error: contract violation of type '";
 
-        char const * type_str;
+        char const * type_str{};
 
         switch (context.contract_type)
         {
@@ -89,7 +89,7 @@ struct contract_handler_frame
 template <typename Func>
 void check_throw_on_contract_violation(Func f, contract::type type)
 {
-    bool caught_exception = false;
+    [[maybe_unused]] bool caught_exception = false;
 
     try
     {
@@ -112,7 +112,7 @@ void check_throw_on_contract_violation(Func f, contract::type type)
 template <typename Func>
 void check_throw_on_contract_violation(Func f, contract::type type, char const * msg)
 {
-    bool caught_exception = false;
+    [[maybe_unused]] bool caught_exception = false;
 
     try
     {
