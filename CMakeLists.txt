@@ -7,11 +7,6 @@ project(
 
 MESSAGE(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
-# C++ standard
-set(CMAKE_CXX_STANDARD   17)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # dependencies
 include(cmake/deps.cmake)
 
@@ -54,7 +49,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-# enforce C++17 on consumers
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 include(cmake/genconfig.cmake)

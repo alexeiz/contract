@@ -1,10 +1,12 @@
 ### Tests
 
 include(../cmake/deps-test.cmake)
+include(../cmake/target_options.cmake)
 
 macro (make_test test_name)
   add_executable(test_${test_name} ${ARGN})
-  target_link_libraries(test_${test_name} PRIVATE contract ${LIBRARIES})
+  target_link_libraries(test_${test_name} PRIVATE contract ${TEST_LIBRARIES})
+  apply_project_options(test_${test_name} PRIVATE)
   add_test(NAME test_${test_name} COMMAND test_${test_name})
 endmacro ()
 

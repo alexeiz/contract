@@ -9,7 +9,7 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 
 **Individual commands:**
 - Configure (Debug): `cmake --preset default .`
-- Build all: `cmake --build build --config Debug --target all` 
+- Build all: `cmake --build build --config Debug --target all`
 - Run all tests: `ctest --preset default`
 - Run individual test: `./build/test_<name>` (e.g., `./build/test_examples`, `./build/test_funcontract`)
 - Release build: `cmake --preset release .` then `cmake --build build --config RelWithDebInfo`
@@ -29,7 +29,7 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 ## Contract API Overview
 **Seven contract scopes:**
 - `contract(fun)` - free function contracts
-- `contract(this)` - method contracts  
+- `contract(this)` - method contracts
 - `contract(class)` - class invariant contracts
 - `contract(derived)` - derived class contracts
 - `contract(ctor)` - constructor contracts
@@ -43,7 +43,7 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 
 **Compile-time disabling:**
 - `CONTRACT_DISABLE_PRECONDITIONS`
-- `CONTRACT_DISABLE_POSTCONDITIONS` 
+- `CONTRACT_DISABLE_POSTCONDITIONS`
 - `CONTRACT_DISABLE_INVARIANTS`
 
 ## Tests and Dependencies
@@ -55,6 +55,8 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 ## Repository Rules
 - Respect `.gitignore` - never commit `build/` directory or generated files
 - Follow existing file structure and naming conventions
+- Use `clang-format` for consistent source code formatting
+- Each source file has to end with a trailing new line
 - If `.cursor/rules`, `.cursorrules`, or `.github/copilot-instructions.md` exist, follow those rules
 
 ## Modification Workflow
@@ -70,4 +72,3 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 - [ ] Test specific features: `./build/test_<relevant_test>`
 - [ ] Verify no build artifacts committed
 - [ ] Write clear commit messages
-

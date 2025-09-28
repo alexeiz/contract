@@ -7,4 +7,4 @@ CPMFindPackage(
   OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES test"
 )
 
-list(APPEND LIBRARIES Boost::unit_test_framework)
+list(APPEND TEST_LIBRARIES Boost::unit_test_framework)

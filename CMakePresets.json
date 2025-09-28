@@ -5,7 +5,6 @@
       "name": "common",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
-      "toolchainFile": "${sourceDir}/cmake/toolchain-gcc.cmake",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
       }

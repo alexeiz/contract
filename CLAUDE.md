@@ -31,7 +31,7 @@ Individual tests can be run directly from the build directory:
 1. **Main Header**: `include/contract/contract.hpp` - Single header providing all contract macros
 2. **Contract Types**: Supports 7 contract scopes:
    - `contract(fun)` - free function contracts
-   - `contract(this)` - method contracts  
+   - `contract(this)` - method contracts
    - `contract(class)` - class invariant contracts
    - `contract(derived)` - derived class contracts with base class invariant enforcement
    - `contract(ctor)` - constructor contracts
@@ -49,7 +49,7 @@ Individual tests can be run directly from the build directory:
 - `include/contract/` - Main library headers
 - `include/contract/detail/` - Implementation details and version info
 - `test/` - Comprehensive test suite with feature-specific tests
-- `cmake/` - CMake configuration files and toolchain
+- `cmake/` - CMake configuration files
 - `src/` - Currently empty (header-only library)
 
 ### Contract Enforcement Rules
@@ -62,7 +62,7 @@ Individual tests can be run directly from the build directory:
 ### Disabling Contract Types
 Use these macros to selectively disable contract checking:
 - `CONTRACT_DISABLE_PRECONDITIONS`
-- `CONTRACT_DISABLE_POSTCONDITIONS` 
+- `CONTRACT_DISABLE_POSTCONDITIONS`
 - `CONTRACT_DISABLE_INVARIANTS`
 
 ## Requirements
@@ -76,3 +76,8 @@ Use these macros to selectively disable contract checking:
 - Tests for disabling individual contract types
 - Violation handler testing
 - Examples showing real-world usage patterns
+
+## Coding conventions
+
+- Use `clang-format` for consistent source code formatting
+- Each source file has to end with trailing new line
