@@ -1,7 +1,7 @@
 # Agents guide for automated contributors
 
 ## Project Overview
-Lib.Contract is a C++17 header-only library for contract programming supporting preconditions, postconditions, and invariants. Version 0.4.3. Main API is `include/contract/contract.hpp`.
+Lib.Contract is a header-only C++ library for contract programming supporting preconditions, postconditions, and invariants. Requires C++17 or later (set via `cxx_std_17` feature). Main API is `include/contract/contract.hpp`.
 
 ## Build / Lint / Test Commands
 **Quick workflow (configure + build + test):**
@@ -11,13 +11,13 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 - Configure (Debug): `cmake --preset default .`
 - Build all: `cmake --build build --config Debug --target all`
 - Run all tests: `ctest --preset default`
-- Run individual test: `./build/test_<name>` (e.g., `./build/test_examples`, `./build/test_funcontract`)
+- Run individual test: `./build/test/test_<name>` (e.g., `./build/test/test_examples`, `./build/test/test_funcontract`)
 - Release build: `cmake --preset release .` then `cmake --build build --config RelWithDebInfo`
 
 **Available test targets:** classcontract, ctorcontract, derivedcontract, disableinvariants, disablepostconditions, disablepreconditions, dtorcontract, examples, funcontract, loopcontract, methcontract, violationhandler
 
 ## Code Style & Conventions
-- **Language:** C++17. Header-only library under `include/contract/`.
+- **Language:** C++17 or later (enforced via `cxx_std_17`). Header-only library under `include/contract/`.
 - **Indentation:** 4 spaces; max ~100 chars per line.
 - **File naming:** Public headers `include/contract/*.hpp`, internal `include/contract/detail/*.hpp` (snake_case).
 - **Includes:** Angle-brackets for external libs, quoted includes for internal; prefer `#include "contract/contract.hpp"`.
@@ -47,7 +47,7 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 - `CONTRACT_DISABLE_INVARIANTS`
 
 ## Tests and Dependencies
-- Tests in `test/*.t.cpp` using Boost.Test framework (Boost 1.88+)
+- Tests in `test/*.t.cpp` using Boost.Test framework (Boost 1.88.0)
 - Test targets: `test_<basename>` (e.g., `test_funcontract`)
 - CMake 3.28+, Ninja build system, GCC 10+ recommended
 - Keep tests deterministic, small, and independent
@@ -63,12 +63,12 @@ Lib.Contract is a C++17 header-only library for contract programming supporting 
 1. **Read** relevant files first using view/str_replace tools
 2. **Configure:** `cmake --preset default .`
 3. **Build:** `cmake --build build --config Debug --target all`
-4. **Test:** Run affected tests (`./build/test_<name>` or `ctest --preset default`)
+4. **Test:** Run affected tests (`./build/test/test_<name>` or `ctest --preset default`)
 5. **Commit:** Imperative messages explaining why changes were made
 
 ## Quick Checklist for Agents
 - [ ] Read files before modifying
 - [ ] Run `cmake --workflow --preset default` to verify changes
-- [ ] Test specific features: `./build/test_<relevant_test>`
+- [ ] Test specific features: `./build/test/test_<relevant_test>`
 - [ ] Verify no build artifacts committed
 - [ ] Write clear commit messages

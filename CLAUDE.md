@@ -79,5 +79,5 @@ Use these macros to selectively disable contract checking:
 
 ## Coding conventions
 
-- Use `clang-format` for consistent source code formatting
+- Use `clang-format -i <files>` for consistent source code formatting
 - Each source file has to end with trailing new line

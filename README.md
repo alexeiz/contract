@@ -1,6 +1,6 @@
 # Lib.Contract #
 
-Library to support contract programming in C++11 and later.
+Library to support contract programming in C++17 and later.
 
 ## Overview ##
 
