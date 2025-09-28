@@ -376,24 +376,24 @@ Lib.Contract uses the CMake build system.  The simplified build/install process
 looks like this:
 
     # in the root directory of the repo
-    $ cmake --preset default .
+    $ cmake --preset default
     $ cmake --build build --config Debug --target all
     $ ctest --preset default
 
 Note: configuring with tests enabled may download Boost via CPM if a local
 Boost is not found. To configure without network access, disable tests:
 
-    $ cmake --preset default -DBUILD_TESTING=OFF .
+    $ cmake --preset default -DBUILD_TESTING=OFF
 
 You can re-enable tests later by re-configuring with `-DBUILD_TESTING=ON`.
 
 ## Quick summary of Build, Test, and Development Commands ##
 
-- Configure (Debug, Ninja/GCC): `cmake --preset default .`
+- Configure (Debug, Ninja/GCC): `cmake --preset default`
 - Build all targets: `cmake --build build --config Debug --target all`
 - Run all tests: `ctest --preset default`
-- Release configure/build: `cmake --preset release .` then `cmake --build build --config RelWithDebInfo`
-- Run a single test binary: `./build/test/test_feature`
+- Release configure/build: `cmake --preset release` then `cmake --build build --preset release`
+- Run a single test binary: `./build/default/test/test_feature`
 - Offline configure: add `-DBUILD_TESTING=OFF` to avoid CPM Boost download
 
 ## Requirements ##

@@ -9,10 +9,16 @@ Lib.Contract is a header-only C++ library for contract programming supporting pr
 
 **Individual commands:**
 - Configure (Debug): `cmake --preset default .`
-- Build all: `cmake --build build --config Debug --target all`
-- Run all tests: `ctest --preset default`
-- Run individual test: `./build/test/test_<name>` (e.g., `./build/test/test_examples`, `./build/test/test_funcontract`)
-- Release build: `cmake --preset release .` then `cmake --build build --config RelWithDebInfo`
+- Configure (Release): `cmake --preset release .`
+- Configure (Clang Debug): `cmake --preset default-clang .`
+- Configure (Clang Release): `cmake --preset release-clang .`
+- Build default: `cmake --build --preset default`
+- Build release: `cmake --build --preset release`
+- Build clang default: `cmake --build --preset default-clang`
+- Build clang release: `cmake --build --preset release-clang`
+- Run all tests: `ctest --preset default` (or `--preset release` for release)
+- Run individual test: `./build/default/test/test_<name>` (e.g., `./build/default/test/test_examples`, `./build/default/test/test_funcontract`)
+- Clang test location: `./build-clang/default/test/test_<name>`
 
 **Available test targets:** classcontract, ctorcontract, derivedcontract, disableinvariants, disablepostconditions, disablepreconditions, dtorcontract, examples, funcontract, loopcontract, methcontract, violationhandler
 
@@ -49,26 +55,30 @@ Lib.Contract is a header-only C++ library for contract programming supporting pr
 ## Tests and Dependencies
 - Tests in `test/*.t.cpp` using Boost.Test framework (Boost 1.88.0)
 - Test targets: `test_<basename>` (e.g., `test_funcontract`)
+- Test executables in: `build/default/test/` (Debug) or `build/release/test/` (Release)
+- Clang build tests in: `build-clang/default/test/` or `build-clang/release/test/`
+- Dependencies managed via CPM (C++ Package Manager)
 - CMake 3.28+, Ninja build system, GCC 10+ recommended
 - Keep tests deterministic, small, and independent
 
 ## Repository Rules
-- Respect `.gitignore` - never commit `build/` directory or generated files
+- Respect `.gitignore` - never commit `build/`, `build-*/` directories or generated files
 - Follow existing file structure and naming conventions
 - Use `clang-format` for consistent source code formatting
 - Each source file has to end with a trailing new line
 - If `.cursor/rules`, `.cursorrules`, or `.github/copilot-instructions.md` exist, follow those rules
+- GitHub Actions CI runs on Ubuntu, Windows, and macOS with both Debug and RelWithDebInfo builds
 
 ## Modification Workflow
 1. **Read** relevant files first using view/str_replace tools
-2. **Configure:** `cmake --preset default .`
-3. **Build:** `cmake --build build --config Debug --target all`
-4. **Test:** Run affected tests (`./build/test/test_<name>` or `ctest --preset default`)
+2. **Configure:** `cmake --preset default .` (or `--preset default-clang` for Clang)
+3. **Build:** `cmake --build --preset default` (or use workflow: `cmake --workflow --preset default`)
+4. **Test:** Run affected tests (`./build/default/test/test_<name>` or `ctest --preset default`)
 5. **Commit:** Imperative messages explaining why changes were made
 
 ## Quick Checklist for Agents
 - [ ] Read files before modifying
 - [ ] Run `cmake --workflow --preset default` to verify changes
-- [ ] Test specific features: `./build/test/test_<relevant_test>`
-- [ ] Verify no build artifacts committed
+- [ ] Test specific features: `./build/default/test/test_<relevant_test>`
+- [ ] Verify no build artifacts committed (no `build/` or `build-*` directories)
 - [ ] Write clear commit messages
