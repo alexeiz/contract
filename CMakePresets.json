@@ -4,7 +4,6 @@
     {
       "name": "common",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
       }
@@ -12,6 +11,7 @@
     {
       "name": "default",
       "inherits": "common",
+      "binaryDir": "${sourceDir}/build/default",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -19,6 +19,30 @@
     {
       "name": "release",
       "inherits": "common",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "common-clang",
+      "inherits": "common",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "default-clang",
+      "inherits": "common-clang",
+      "binaryDir": "${sourceDir}/build-clang/default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release-clang",
+      "inherits": "common-clang",
+      "binaryDir": "${sourceDir}/build-clang/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
@@ -32,6 +56,14 @@
     {
       "name": "release",
       "configurePreset": "release"
+    },
+    {
+      "name": "default-clang",
+      "configurePreset": "default-clang"
+    },
+    {
+      "name": "release-clang",
+      "configurePreset": "release-clang"
     }
   ],
   "testPresets": [
@@ -42,6 +74,14 @@
     {
       "name": "release",
       "configurePreset": "release"
+    },
+    {
+      "name": "default-clang",
+      "configurePreset": "default-clang"
+    },
+    {
+      "name": "release-clang",
+      "configurePreset": "release-clang"
     }
   ],
   "workflowPresets": [

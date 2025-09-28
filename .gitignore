@@ -15,6 +15,7 @@
 # local files
 CMakeUserPresets.json
 build/
+build-*/
 Testing/
 .vscode/
 
