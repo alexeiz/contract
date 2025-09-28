@@ -24,12 +24,21 @@ function(apply_project_options target scope)
         -Wrestrict
         -finput-charset=UTF-8
         -fexec-charset=UTF-8
-        -fdiagnostics-all-candidates
     )
 
     foreach(option IN LISTS gcc_only_options)
         target_compile_options(${target} ${scope}
             $<$<CXX_COMPILER_ID:GNU>:${option}>
+        )
+    endforeach()
+
+    set(gcc_14_options
+        -fdiagnostics-all-candidates
+    )
+
+    foreach(option IN LISTS gcc_14_options)
+        target_compile_options(${target} ${scope}
+            $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,14>>:${option}>
         )
     endforeach()
 endfunction()
