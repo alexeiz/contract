@@ -41,4 +41,14 @@ function(apply_project_options target scope)
             $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,14>>:${option}>
         )
     endforeach()
+
+    set(msvc_options
+        /Zc:preprocessor
+    )
+
+    foreach(option IN LISTS msvc_options)
+        target_compile_options(${target} ${scope}
+            $<$<CXX_COMPILER_ID:MSVC>:${option}>
+        )
+    endforeach()
 endfunction()
