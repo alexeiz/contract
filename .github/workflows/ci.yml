@@ -43,7 +43,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         if [ "${{ matrix.build-type }}" = "Debug" ]; then
-          cmake --preset=default
+          cmake --preset=debug
         else
           cmake --preset=release
         fi
@@ -62,7 +62,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         if [ "${{ matrix.build-type }}" = "Debug" ]; then
-          cmake --build --preset=default
+          cmake --build --preset=debug
         else
           cmake --build --preset=release
         fi
@@ -75,7 +75,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         if [ "${{ matrix.build-type }}" = "Debug" ]; then
-          ctest --preset=default --output-on-failure
+          ctest --preset=debug --output-on-failure
         else
           ctest --preset=release --output-on-failure
         fi

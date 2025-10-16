@@ -9,13 +9,13 @@ This is Lib.Contract, a header-only C++ library for contract programming support
 ## Build System & Commands
 
 ### CMake Configuration
-- Configure: `cmake --preset default .`
+- Configure: `cmake --preset debug .`
 - Build: `cmake --build build --config Debug --target all`
-- Test: `ctest --preset default`
-- Workflow (configure + build + test): `cmake --workflow --preset default`
+- Test: `ctest --preset debug`
+- Workflow (configure + build + test): `cmake --workflow --preset debug`
 
 ### Available Presets
-- `default`: Debug build configuration
+- `debug`: Debug build configuration
 - `release`: RelWithDebInfo build configuration
 
 ### Single Test Execution

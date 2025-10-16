@@ -5,20 +5,20 @@ Lib.Contract is a header-only C++ library for contract programming supporting pr
 
 ## Build / Lint / Test Commands
 **Quick workflow (configure + build + test):**
-- `cmake --workflow --preset default`
+- `cmake --workflow --preset debug`
 
 **Individual commands:**
-- Configure (Debug): `cmake --preset default .`
+- Configure (Debug): `cmake --preset debug .`
 - Configure (Release): `cmake --preset release .`
-- Configure (Clang Debug): `cmake --preset default-clang .`
+- Configure (Clang Debug): `cmake --preset debug-clang .`
 - Configure (Clang Release): `cmake --preset release-clang .`
-- Build default: `cmake --build --preset default`
+- Build debug: `cmake --build --preset debug`
 - Build release: `cmake --build --preset release`
-- Build clang default: `cmake --build --preset default-clang`
+- Build clang debug: `cmake --build --preset debug-clang`
 - Build clang release: `cmake --build --preset release-clang`
-- Run all tests: `ctest --preset default` (or `--preset release` for release)
-- Run individual test: `./build/default/test/test_<name>` (e.g., `./build/default/test/test_examples`, `./build/default/test/test_funcontract`)
-- Clang test location: `./build-clang/default/test/test_<name>`
+- Run all tests: `ctest --preset debug` (or `--preset release` for release)
+- Run individual test: `./build/debug/test/test_<name>` (e.g., `./build/debug/test/test_examples`, `./build/debug/test/test_funcontract`)
+- Clang test location: `./build/debug-clang/test/test_<name>`
 
 **Available test targets:** classcontract, ctorcontract, derivedcontract, disableinvariants, disablepostconditions, disablepreconditions, dtorcontract, examples, funcontract, loopcontract, methcontract, violationhandler
 
@@ -55,8 +55,8 @@ Lib.Contract is a header-only C++ library for contract programming supporting pr
 ## Tests and Dependencies
 - Tests in `test/*.t.cpp` using Boost.Test framework (Boost 1.88.0)
 - Test targets: `test_<basename>` (e.g., `test_funcontract`)
-- Test executables in: `build/default/test/` (Debug) or `build/release/test/` (Release)
-- Clang build tests in: `build-clang/default/test/` or `build-clang/release/test/`
+- Test executables in: `build/debug/test/` (Debug) or `build/release/test/` (Release)
+- Clang build tests in: `build/debug-clang/test/` or `build/release-clang/test/`
 - Dependencies managed via CPM (C++ Package Manager)
 - CMake 3.28+, Ninja build system, GCC 10+ recommended
 - Keep tests deterministic, small, and independent
@@ -71,14 +71,14 @@ Lib.Contract is a header-only C++ library for contract programming supporting pr
 
 ## Modification Workflow
 1. **Read** relevant files first using view/str_replace tools
-2. **Configure:** `cmake --preset default .` (or `--preset default-clang` for Clang)
-3. **Build:** `cmake --build --preset default` (or use workflow: `cmake --workflow --preset default`)
-4. **Test:** Run affected tests (`./build/default/test/test_<name>` or `ctest --preset default`)
+2. **Configure:** `cmake --preset debug .` (or `--preset debug-clang` for Clang)
+3. **Build:** `cmake --build --preset debug` (or use workflow: `cmake --workflow --preset debug`)
+4. **Test:** Run affected tests (`./build/debug/test/test_<name>` or `ctest --preset debug`)
 5. **Commit:** Imperative messages explaining why changes were made
 
 ## Quick Checklist for Agents
 - [ ] Read files before modifying
-- [ ] Run `cmake --workflow --preset default` to verify changes
-- [ ] Test specific features: `./build/default/test/test_<relevant_test>`
+- [ ] Run `cmake --workflow --preset debug` to verify changes
+- [ ] Test specific features: `./build/debug/test/test_<relevant_test>`
 - [ ] Verify no build artifacts committed (no `build/` or `build-*` directories)
 - [ ] Write clear commit messages
