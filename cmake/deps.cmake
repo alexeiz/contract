@@ -1,2 +1,2 @@
 # CPM libraries
-include(cmake/get_cpm.cmake)
+include(cmake/CPM.cmake)
